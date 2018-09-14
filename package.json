@@ -1,6 +1,6 @@
 {
   "name": "@darkobits/vsct",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "darkobits",
   "description": "A framework for creating VS Code themes and distributing them via NPM.",
   "license": "WTFPL",
@@ -22,7 +22,7 @@
     "test": "jest",
     "prebuild": "run-p clean check:*",
     "build": "babel src --extensions '.ts' --out-dir dist",
-    "prebump": "run-s build compile",
+    "prebump": "run-s test build",
     "bump": "standard-version",
     "bump:beta": "npm run prebump && standard-version --prerelease=beta",
     "link": "concurrently \"npm run check:types -- --outDir $(npx clean-link-dir)/dist --watch --preserveWatchOutput\" \"npm run build -- --out-dir $(npx clean-link-dir)/dist --watch --verbose\""
