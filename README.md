@@ -13,6 +13,8 @@ A framework for creating VS Code themes and distributing them via NPM.
 
 ## Install
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/05354c3fb8404d73840d7a80b176bce6)](https://app.codacy.com/app/darkobits/vsct?utm_source=github.com&utm_medium=referral&utm_content=darkobits/vsct&utm_campaign=Badge_Grade_Dashboard)
+
 ```
 npm i @darkobits/vsct
 ```
