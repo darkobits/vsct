@@ -40,9 +40,11 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
     // Compute the absolute path to the symlink we will create in the VS Code
     // themes folder.
     const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName(json, themeDirName));
+    log.silly('install', `Symlink will be created at: ${absSymlinkPath}`);
 
     // Determine if a symlink already exists.
     const symlinkExists = await fs.pathExists(absSymlinkPath);
+    log.silly('install', 'Symlink does not exist; it will be created.');
 
     if (symlinkExists) {
       const linkTarget = await fs.realpath(absSymlinkPath);
@@ -61,7 +63,8 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
       await fs.unlink(absSymlinkPath);
     }
 
-    await fs.symlink(absThemeOutDir, absSymlinkPath);
-    log.info('install', `Symlinked ${chalk.green(absSymlinkPath)} => ${chalk.green(absThemeOutDir)}.`);
+    await fs.ensureSymlink(absThemeOutDir, absSymlinkPath);
+    log.verbose('install', `Symlinked ${chalk.green(absSymlinkPath)} => ${chalk.green(absThemeOutDir)}.`);
+    log.info('install', `Theme ${chalk.blue(parsedThemeLabel)} installed.`);
   }));
 }

@@ -32,7 +32,7 @@ export default yargs.command({
       const {root, json} = await pkgInfo();
       await install({args, config, root, json});
     } catch (err) {
-      log.error('install', err.message);
+      log.error('install', err.stack);
       process.exit(1);
     }
   }
