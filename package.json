@@ -1,6 +1,6 @@
 {
   "name": "@darkobits/vsct",
-  "version": "0.2.3-beta.0",
+  "version": "0.2.3",
   "author": "darkobits",
   "description": "A framework for creating VS Code themes and distributing them via NPM.",
   "license": "WTFPL",
