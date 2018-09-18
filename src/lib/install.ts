@@ -26,6 +26,16 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
   // Compute the absolute path to the output directory.
   const absThemesDir = path.resolve(root, config.outDir);
 
+  if (!config) {
+    log.warn('install', 'No configuration provided; unable to install themes.');
+    return;
+  }
+
+  if (!config.themes || config.themes.length === 0) {
+    log.warn('install', 'Configuration file did not define any themes.');
+    return;
+  }
+
   return Promise.all(config.themes.map(async themeDescriptor => {
     // Compute the human-friendly display name/label to use for the theme by
     // evaluating any tokens used (ie: ${version}).

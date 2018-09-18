@@ -18,7 +18,7 @@ jest.mock('fs-extra', () => {
     _setRealpathReturnValue: (value: any) => {
       realpathReturnValue = value;
     },
-    symlink: jest.fn(),
+    ensureSymlink: jest.fn(),
     unlink: jest.fn()
   };
 });
@@ -63,7 +63,7 @@ describe('install', () => {
         await install({args, config, json, root: ROOT_DIR});
 
         expect(fs.pathExists).toHaveBeenCalledWith('/mock/vscode/extensions/author.muh-theme');
-        expect(fs.symlink).not.toHaveBeenCalled();
+        expect(fs.ensureSymlink).not.toHaveBeenCalled();
         expect(fs.unlink).not.toHaveBeenCalled();
       });
     });
@@ -81,7 +81,7 @@ describe('install', () => {
         expect(fs.pathExists).toHaveBeenCalledWith('/mock/vscode/extensions/author.muh-theme');
         expect(fs.realpath).toHaveBeenCalledWith('/mock/vscode/extensions/author.muh-theme');
         expect(fs.unlink).toHaveBeenCalledWith('/mock/vscode/extensions/author.muh-theme');
-        expect(fs.symlink).toHaveBeenCalledWith('/root/theme/dir/themes/muh-theme', '/mock/vscode/extensions/author.muh-theme');
+        expect(fs.ensureSymlink).toHaveBeenCalledWith('/root/theme/dir/themes/muh-theme', '/mock/vscode/extensions/author.muh-theme');
       });
     });
   });
@@ -101,7 +101,7 @@ describe('install', () => {
       expect(fs.pathExists).toHaveBeenCalledWith('/mock/vscode/extensions/author.muh-theme');
       expect(fs.realpath).not.toHaveBeenCalled();
       expect(fs.unlink).not.toHaveBeenCalled();
-      expect(fs.symlink).toHaveBeenCalledWith('/root/theme/dir/themes/muh-theme', '/mock/vscode/extensions/author.muh-theme');
+      expect(fs.ensureSymlink).toHaveBeenCalledWith('/root/theme/dir/themes/muh-theme', '/mock/vscode/extensions/author.muh-theme');
     });
   });
 });
