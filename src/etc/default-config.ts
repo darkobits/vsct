@@ -1,7 +1,7 @@
 import {VSCTConfiguration} from 'etc/types';
 
 
-export default {
+const defaultConfig: VSCTConfiguration = {
   /**
    * By default, compiled themes will be written to <host package root>/themes.
    */
@@ -11,4 +11,7 @@ export default {
    * Init theme descriptors array.
    */
   themes: []
-} as VSCTConfiguration;
+};
+
+
+export default defaultConfig;

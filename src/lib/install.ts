@@ -1,20 +1,31 @@
 /**
  * ===== Install ===============================================================
  *
- * This module is the handler for the "vsct install" command.
+ * This module is the handler for the "vsct install" command, which should be
+ * part of a consumer's "postinstall" NPM script. It is also run by the "vsct
+ * start" command to symlink theme directories.
  */
 import path from 'path';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import {EXTENSIONS_DIR} from 'etc/constants';
-import {CLIHandlerOptions} from 'etc/types';
+import {CLIHandlerOptions, LooseObject} from 'etc/types';
 import log from 'lib/log';
 
 import {
   parseThemeLabel,
-  generateThemeDirName,
-  generateVsCodeThemeDirectoryName
+  generateThemeDirName
 } from 'lib/misc';
+
+
+/**
+ * Provided a theme's base directory name and the host package's packge.json,
+ * returns the directory name that should be used when creating symlinks in the
+ * VS Code themes folder.
+ */
+export function generateVsCodeThemeDirectoryName(json: LooseObject, themeDirName: string): string {
+  return `${json.author.name.toLowerCase()}.${themeDirName.toLowerCase()}`;
+}
 
 
 /**

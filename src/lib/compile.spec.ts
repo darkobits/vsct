@@ -31,7 +31,8 @@ jest.mock('lib/misc', () => {
     }),
     parseThemeLabel: jest.fn(() => {
       return '__PARSED_THEME_LABEL__';
-    })
+    }),
+    getUnscopedName: jest.fn()
   };
 });
 

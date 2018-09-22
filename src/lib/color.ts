@@ -16,7 +16,7 @@ import Color from 'color';
  */
 function rgbToHex(value: number): string {
   return Math.round(value).toString(16).padStart(2, '0').toUpperCase();
-};
+}
 
 
 Color.prototype.toString = function (this: Color): string {

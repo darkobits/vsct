@@ -87,16 +87,6 @@ export async function getImmediateSubfolders(rootDir: string) {
 
 
 /**
- * Provided a theme's base directory name and the host package's packge.json,
- * returns the directory name that should be used when creating symlinks in the
- * VS Code themes folder.
- */
-export function generateVsCodeThemeDirectoryName(json: LooseObject, themeDirName: string): string {
-  return `${json.author.name.toLowerCase()}.${themeDirName.toLowerCase()}`;
-}
-
-
-/**
  * Returns a copy of the provided array with any duplicate items removed.
  */
 export function uniq(arr: Array<any>): Array<any> {
@@ -150,4 +140,17 @@ export function merge(a: LooseObject, b: LooseObject, throwOnDuplicate = false):
  */
 export async function sleep(ms: number): Promise<object> {
   return new Promise(resolve => setTimeout(() => resolve(), ms));
+}
+
+
+/**
+ * Strips the scope from the provided package name, if it has one.
+ *
+ * @example
+ *
+ * getUnscopedName('@foo/bar') => 'bar'
+ * getUnscopedName('bar') => 'bar'
+ */
+export function getUnscopedName(fullName: string): string {
+  return fullName.split('/').slice(-1)[0];
 }

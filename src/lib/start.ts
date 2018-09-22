@@ -1,12 +1,16 @@
 /**
  * ===== Start ===============================================================
  *
- * This module is the handler for the "vsct start" command.
+ * This module is the handler for the "vsct start" command. It composes the
+ * "compile" and "install" commands and re-compiles themes when their source
+ * files change.
  */
 import path from 'path';
+
 import Bottleneck from 'bottleneck';
 import chalk from 'chalk';
 import chokidar from 'chokidar';
+
 import {CLIHandlerOptions} from 'etc/types';
 import compile from 'lib/compile';
 import install from 'lib/install';

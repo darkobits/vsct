@@ -16,7 +16,7 @@ import {
   parseThemeLabel,
 } from 'lib/misc';
 
-import {getUnscopedName} from 'lib/pkg-info';
+import {getUnscopedName} from 'lib/misc';
 
 
 /**
@@ -166,6 +166,7 @@ export default async function compile({/* args, */config, root, json}: CLIHandle
       return await compileThemeToJson({absBaseDir: root, absOutDir, json, themeDescriptor});
     } catch (err) {
       log.error('compile', err.message);
+      console.error('COMPILATION ERROR', err.message);
       compilationHasErrors = true;
     }
   }));
