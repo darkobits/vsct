@@ -1,12 +1,12 @@
 language: node_js
-node_js: 8
+node_js: 12
 
 install:
-  - npm ci
+  - npm ci --ignore-scripts
 
 script:
-  - npm run build
-  - npm test -- --coverage
+  - npx nps prepare
+  - npx nps test.coverage
 
 after_success:
   - npx codacy-coverage -v < ./coverage/lcov.info

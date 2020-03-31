@@ -15,7 +15,34 @@ import {CLIHandlerOptions} from 'etc/types';
 import compile from 'lib/compile';
 import install from 'lib/install';
 import log from 'lib/log';
-import {clearRequireCache, sleep, uniq} from 'lib/misc';
+import {clearRequireCache, uniq} from 'lib/misc';
+
+
+/**
+ * Provided a watcher instance, returns a Promise that resolves once the watcher
+ * receives an 'add' event and then goes 'delay' milliseconds without receiving
+ * an 'add' event. This is a heuristic that should generally tell us when a
+ * transpiler (ie: Babel) has finished writing files to its output directory.
+ */
+async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, delay = 100) {
+  return new Promise((resolve, reject) => {
+    log.info('ready', 'Waiting for source files.');
+
+    let lastFileAddedOn = Infinity;
+
+    watcher.on('add', filePath => {
+      lastFileAddedOn = Date.now();
+    });
+
+    const intervalHandle = setInterval(() => {
+      if (Date.now() - lastFileAddedOn > delay) {
+        log.info('start', 'Source files ready.');
+        resolve();
+        clearInterval(intervalHandle);
+      }
+    }, 100);
+  });
+}
 
 
 export default async function start({args, config, root, json}: CLIHandlerOptions) {
@@ -27,6 +54,8 @@ export default async function start({args, config, root, json}: CLIHandlerOption
   const watcher = chokidar.watch(absThemeDirs, {
     ignoreInitial: true
   });
+
+  const compilationReadyPromise = waitForThemeFilesToBecomeAvailable(watcher, 500);
 
   // Create a new limiter that will only allow one compilation to occur at a
   // time.
@@ -45,7 +74,7 @@ export default async function start({args, config, root, json}: CLIHandlerOption
       // Mildly hacky, but we need to wait a small amount of time for the user's
       // compilation to finish before we start reading files, or we may get
       // stale data.
-      await sleep(250);
+      await compilationReadyPromise;
 
       await compile({args, config, root, json});
       await install({args: {...args, silent: true}, config, root, json});
@@ -78,6 +107,8 @@ export default async function start({args, config, root, json}: CLIHandlerOption
   }
 
   watcher.on('ready', async () => {
+    log.verbose('start', 'Watcher ready.');
+
     absThemeDirs.forEach(themeDir => {
       log.info('start', `Watching ${chalk.green(themeDir)}.`);
     });

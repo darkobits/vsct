@@ -24,11 +24,11 @@ export async function loadThemeFromModule(absModulePath: string): Promise<any> {
   // Scrub theme for circular references and functions.
   traverse(theme).forEach(function (node) {
     if (this.circular) {
-      throw new Error(`Theme contains circular references.`);
+      throw new Error('Theme contains circular references.');
     }
 
     if (typeof node === 'function') {
-      throw new Error(`Theme contains non-serializable entities.`);
+      throw new Error('Theme contains non-serializable entities.');
     }
   });
 
@@ -116,7 +116,7 @@ export function clearRequireCache() {
  * Returns the version of VS Code currently installed on the system.
  */
 export async function getVsCodeVersion() {
-  const result = await execa.shell(`code --version`);
+  const result = await execa('code', ['--version']);
   return result.stdout.split('\n')[0];
 }
 
@@ -132,14 +132,6 @@ export function merge(a: LooseObject, b: LooseObject, throwOnDuplicate = false):
 
     Reflect.set(a, key, b[key]);
   });
-}
-
-
-/**
- * Returns a promise that resolves after the provided delay.
- */
-export async function sleep(ms: number): Promise<object> {
-  return new Promise(resolve => setTimeout(() => resolve(), ms));
 }
 
 

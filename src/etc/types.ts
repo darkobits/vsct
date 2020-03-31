@@ -1,5 +1,3 @@
-import {Arguments} from 'yargs';
-
 /**
  * An object of unknown shape.
  */
@@ -32,7 +30,7 @@ export interface VSCTConfiguration {
  * Standard options passed to CLI handlers.
  */
 export interface CLIHandlerOptions {
-  args: Arguments;
+  args: any;
   root: string;
   config: VSCTConfiguration;
   json: LooseObject;
