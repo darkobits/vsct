@@ -70,9 +70,8 @@ export default async function start({args, config, root, json}: CLIHandlerOption
     try {
       clearRequireCache();
 
-      // Mildly hacky, but we need to wait a small amount of time for the user's
-      // compilation to finish before we start reading files, or we may get
-      // stale data.
+      // Wait until the theme's source files are available before we try to read
+      // them.
       await compilationReadyPromise;
 
       await compile({args, config, root, json});
