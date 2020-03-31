@@ -169,6 +169,7 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
  * Responsible re-compiling each theme defined in the user's configuration file.
  */
 export default async function compile({config, root, json}: CLIHandlerOptions) {
+  throw new Error('foo');
   const absOutDir = path.resolve(root, config.outDir);
   log.verbose('compile', `Themes will be compiled to ${chalk.green(absOutDir)}.`);
 
