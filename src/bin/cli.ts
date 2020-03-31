@@ -38,7 +38,7 @@ function commonHandler(handlerFn: Function) {
         json: packageInfo.packageJson
       });
     } catch (err) {
-      log.error(handlerFn.name, err.stack);
+      log.error(log.prefix(handlerFn.name), err.stack);
       process.exit(1);
     }
   };

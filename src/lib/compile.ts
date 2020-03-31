@@ -4,7 +4,6 @@
  * This module is the handler for the "vsct compile" command.
  */
 import path from 'path';
-import chalk from 'chalk';
 import fs from 'fs-extra';
 import {CLIHandlerOptions, LooseObject, ThemeDescriptor} from 'etc/types';
 import log from 'lib/log';
@@ -51,7 +50,7 @@ export interface CompileThemeToJsonOptions {
 async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}: CompileThemeToJsonOptions) {
   // ----- [1] Compute Paths & Prepare Output Directory ------------------------
 
-  log.verbose('compile', 'Preparing output directories.');
+  log.verbose(log.prefix('compile'), 'Preparing output directories.');
 
   // Compute absolute path to the theme module.
   const absThemeSrcPath = path.resolve(absBaseDir, themeDescriptor.main);
@@ -78,18 +77,18 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
 
   // ----- [2] Validate Paths & Files ------------------------------------------
 
-  log.verbose('compile', 'Validating paths.');
+  log.verbose(log.prefix('compile'), 'Validating paths.');
 
   const themeExists = await fs.pathExists(absThemeSrcPath);
 
   if (!themeExists) {
-    throw new Error(`Theme ${chalk.blue(parsedThemeLabel)} could not be found.`);
+    throw new Error(`Theme ${log.chalk.blue(parsedThemeLabel)} could not be found.`);
   }
 
 
   // ----- [3] Write Theme Manifest --------------------------------------------
 
-  log.verbose('compile', 'Writing theme manifest.');
+  log.verbose(log.prefix('compile'), 'Writing theme manifest.');
 
   // Compute the absolute path to the manifest we will create for the theme.
   const absManifestOutPath = path.resolve(absThemeOutDir, 'package.json');
@@ -127,24 +126,24 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
   if (themeDescriptor.type === 'uncompiled' || themeDescriptor.type === undefined) {
     let theme;
 
-    log.verbose('compile', 'Loading & compiling theme.');
+    log.verbose(log.prefix('compile'), 'Loading & compiling theme.');
 
     try {
       theme = await loadThemeFromModule(absThemeSrcPath);
     } catch (err) {
       if (err.message.match(/ENOENT/g)) {
-        log.error('compile', `Theme ${chalk.blue(parsedThemeLabel)} does not exist; skipping compilation.`);
+        log.error(log.prefix('compile'), `Theme ${log.chalk.blue(parsedThemeLabel)} does not exist; skipping compilation.`);
         return;
       }
 
       throw err;
     }
 
-    log.verbose('compile', `Loaded theme ${chalk.blue(parsedThemeLabel)} from ${chalk.green(absThemeSrcPath)}.`);
+    log.verbose(log.prefix('compile'), `Loaded theme ${log.chalk.blue(parsedThemeLabel)} from ${log.chalk.green(absThemeSrcPath)}.`);
 
     // Write theme JSON.
     await fs.writeJson(absThemeOutPath, theme, {spaces: 2});
-    log.info('compile', `Wrote theme ${chalk.blue(parsedThemeLabel)} to ${chalk.green(absThemeOutPath)}.`);
+    log.info(log.prefix('compile'), `Wrote theme ${log.chalk.blue(parsedThemeLabel)} to ${log.chalk.green(absThemeOutPath)}.`);
 
     return;
   }
@@ -154,11 +153,11 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
 
 
   if (themeDescriptor.type === 'precompiled') {
-    log.verbose('compile', 'Loading pre-compiled theme.');
+    log.verbose(log.prefix('compile'), 'Loading pre-compiled theme.');
 
     await fs.move(absThemeSrcPath, absThemeOutPath);
 
-    log.verbose('compile', `Copied theme ${chalk.blue(parsedThemeLabel)} ${chalk.dim('(pre-compiled)')}.`);
+    log.verbose(log.prefix('compile'), `Copied theme ${log.chalk.blue(parsedThemeLabel)} ${log.chalk.dim('(pre-compiled)')}.`);
 
     return;
   }
@@ -169,9 +168,8 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
  * Responsible re-compiling each theme defined in the user's configuration file.
  */
 export default async function compile({config, root, json}: CLIHandlerOptions) {
-  throw new Error('foo');
   const absOutDir = path.resolve(root, config.outDir);
-  log.verbose('compile', `Themes will be compiled to ${chalk.green(absOutDir)}.`);
+  log.verbose(log.prefix('compile'), `Themes will be compiled to ${log.chalk.green(absOutDir)}.`);
 
   let compilationHasErrors = false;
 
@@ -179,7 +177,7 @@ export default async function compile({config, root, json}: CLIHandlerOptions) {
     try {
       await compileThemeToJson({absBaseDir: root, absOutDir, json, themeDescriptor});
     } catch (err) {
-      log.error('compile', err.stack);
+      log.error(log.prefix('compile'), err.stack);
       compilationHasErrors = true;
     }
   }));

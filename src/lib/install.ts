@@ -6,7 +6,6 @@
  * start" command to symlink theme directories.
  */
 import path from 'path';
-import chalk from 'chalk';
 import fs from 'fs-extra';
 import {EXTENSIONS_DIR} from 'etc/constants';
 import {CLIHandlerOptions, LooseObject} from 'etc/types';
@@ -37,13 +36,8 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
   // Compute the absolute path to the output directory.
   const absThemesDir = path.resolve(root, config.outDir);
 
-  if (!config) {
-    log.warn('install', 'No configuration provided; unable to install themes.');
-    return;
-  }
-
   if (!config.themes || config.themes.length === 0) {
-    log.warn('install', 'Configuration file did not define any themes.');
+    log.warn(log.prefix('install'), 'Configuration file did not define any themes.');
     return;
   }
 
@@ -61,11 +55,11 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
     // Compute the absolute path to the symlink we will create in the VS Code
     // themes folder.
     const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName(json, themeDirName));
-    log.silly('install', `Symlink will be created at: ${absSymlinkPath}`);
+    log.silly(log.prefix('install'), `Symlink will be created at: ${absSymlinkPath}`);
 
     // Determine if a symlink already exists.
     const symlinkExists = await fs.pathExists(absSymlinkPath);
-    log.silly('install', 'Symlink does not exist; it will be created.');
+    log.silly(log.prefix('install'), 'Symlink does not exist; it will be created.');
 
     if (symlinkExists) {
       const linkTarget = await fs.realpath(absSymlinkPath);
@@ -74,7 +68,7 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
         // This flag is only used internally by the "start" command to suppress
         // this notification on re-compilations.
         if (!args.silent) {
-          log.info('install', `Theme ${chalk.blue(parsedThemeLabel)} already installed; skipping.`);
+          log.info(log.prefix('install'), `Theme ${log.chalk.blue(parsedThemeLabel)} already installed; skipping.`);
         }
 
         return;
@@ -85,7 +79,7 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
     }
 
     await fs.ensureSymlink(absThemeOutDir, absSymlinkPath);
-    log.verbose('install', `Symlinked ${chalk.green(absSymlinkPath)} => ${chalk.green(absThemeOutDir)}.`);
-    log.info('install', `Theme ${chalk.blue(parsedThemeLabel)} installed.`);
+    log.verbose(log.prefix('install'), `Symlinked ${log.chalk.green(absSymlinkPath)} => ${log.chalk.green(absThemeOutDir)}.`);
+    log.info(log.prefix('install'), `Theme ${log.chalk.blue(parsedThemeLabel)} installed.`);
   }));
 }

@@ -8,7 +8,6 @@
 import path from 'path';
 
 import Bottleneck from 'bottleneck';
-import chalk from 'chalk';
 import chokidar from 'chokidar';
 
 import {CLIHandlerOptions} from 'etc/types';
@@ -26,7 +25,7 @@ import {clearRequireCache, uniq} from 'lib/misc';
  */
 async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, delay = 100) {
   return new Promise((resolve, reject) => {
-    log.info('ready', 'Waiting for source files.');
+    log.info(log.prefix('start'), 'Waiting for source files.');
 
     let lastFileAddedOn = Infinity;
 
@@ -36,7 +35,7 @@ async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, d
 
     const intervalHandle = setInterval(() => {
       if (Date.now() - lastFileAddedOn > delay) {
-        log.info('start', 'Source files ready.');
+        log.info(log.prefix('start'), 'Source files ready.');
         resolve();
         clearInterval(intervalHandle);
       }
@@ -82,7 +81,7 @@ export default async function start({args, config, root, json}: CLIHandlerOption
       if (err.message.match(/EEXIST/g)) {
         // Ignore EEXIST errors on install.
       } else {
-        log.error('watch', err.message);
+        log.error(log.prefix('start'), `Watcher error: ${err.stack}`);
       }
     }
   });
@@ -97,32 +96,32 @@ export default async function start({args, config, root, json}: CLIHandlerOption
     } catch (err) {
       // @ts-ignore
       if (err instanceof Bottleneck.BottleneckError) {
-        log.silly('start', 'Job cancelled by rate-limiter.');
+        log.silly(log.prefix('start'), 'Job cancelled by rate-limiter.');
         return;
       }
 
-      log.error('start', `Error during compilation: ${err.message}`);
+      log.error(log.prefix('start'), `Error during compilation: ${err.stack}`);
       throw err;
     }
   }
 
   watcher.on('ready', async () => {
-    log.verbose('start', 'Watcher ready.');
+    log.verbose(log.prefix('start'), 'Watcher ready.');
 
     absThemeDirs.forEach(themeDir => {
-      log.info('start', `Watching ${chalk.green(themeDir)}.`);
+      log.info(log.prefix('start'), `Watching ${log.chalk.green(themeDir)}.`);
     });
 
     return invokeLimitedRecompile();
   });
 
   watcher.on('add', async filePath => {
-    log.verbose('watch', `Added: ${chalk.green(filePath)}.`);
+    log.verbose(log.prefix('watch'), `Added: ${log.chalk.green(filePath)}.`);
     return invokeLimitedRecompile();
   });
 
   watcher.on('change', async filePath => {
-    log.verbose('watch', `Changed: ${chalk.green(filePath)}.`);
+    log.verbose(log.prefix('watch'), `Changed: ${log.chalk.green(filePath)}.`);
     return invokeLimitedRecompile();
   });
 }
