@@ -48,7 +48,7 @@ describe('install', () => {
     name: 'muh-theme',
     version: '9000',
     author: {name: 'Author'}
-  };
+  } as any;
 
   describe('when the target symlink already exists', () => {
     describe('and it points to the desired target location', () => {

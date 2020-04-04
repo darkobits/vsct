@@ -1,9 +1,4 @@
-/**
- * An object of unknown shape.
- */
-export interface LooseObject {
-  [index: string]: any;
-}
+import {NormalizedPackageJson} from 'read-pkg-up';
 
 
 /**
@@ -44,7 +39,7 @@ export interface CLIHandlerOptions {
   args: any;
   root: string;
   config: VSCTConfiguration;
-  json: LooseObject;
+  json: NormalizedPackageJson;
 }
 
 
@@ -54,6 +49,8 @@ export interface CLIHandlerOptions {
  */
 export interface FormattingDescriptor {
   name?: string;
-  settings: LooseObject;
   scope: string | Array<string>;
+  settings: {
+    [index: string]: string;
+  };
 }

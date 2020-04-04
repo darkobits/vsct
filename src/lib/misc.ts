@@ -8,7 +8,6 @@ import importUnique from '@darkobits/import-unique';
 import execa from 'execa';
 import fs from 'fs-extra';
 import traverse from 'traverse';
-import {LooseObject} from 'etc/types';
 
 
 /**
@@ -37,21 +36,6 @@ export async function loadThemeFromModule(absModulePath: string): Promise<any> {
   JSON.stringify(theme);
 
   return theme;
-}
-
-
-/**
- * Provided a raw theme label from a theme descriptor object, performs token
- * replacement and returns the parsed theme label.
- */
-export function parseThemeLabel(rawLabel: string, json: any): string {
-  const tokens = {
-    '${version}': json.version // tslint:disable-line no-invalid-template-strings
-  };
-
-  return Object.entries(tokens).reduce((label, [token, replacement]) => {
-    return label.replace(token, replacement);
-  }, rawLabel);
 }
 
 
@@ -124,7 +108,7 @@ export async function getVsCodeVersion() {
 /**
  * Performs an in-place merge of the keys in object b into object a.
  */
-export function merge(a: LooseObject, b: LooseObject, throwOnDuplicate = false): void {
+export function merge<O extends {[index: string]: any}>(a: O, b: O, throwOnDuplicate = false): void {
   Object.keys(b).forEach(key => {
     if (throwOnDuplicate && Reflect.has(a, key)) {
       throw new Error(`Duplicate key: "${key}"`);

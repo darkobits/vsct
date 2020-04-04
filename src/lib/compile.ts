@@ -5,15 +5,14 @@
  */
 import path from 'path';
 import fs from 'fs-extra';
-import {CLIHandlerOptions, LooseObject, ThemeDescriptor} from 'etc/types';
+import {CLIHandlerOptions, ThemeDescriptor} from 'etc/types';
 import log from 'lib/log';
 
 import {
   generateThemeDirName,
   getUnscopedName,
   getVsCodeVersion,
-  loadThemeFromModule,
-  parseThemeLabel
+  loadThemeFromModule
 } from 'lib/misc';
 
 
@@ -34,7 +33,7 @@ export interface CompileThemeToJsonOptions {
   /**
    * Parsed contents of the host's package.json.
    */
-  json: LooseObject;
+  json: CLIHandlerOptions['json'];
 
   /**
    * Theme descriptor object from the user's VSCT configuration file.
@@ -58,12 +57,8 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
   // Get the base file name of the theme module.
   const themeBaseName = path.parse(absThemeSrcPath).name;
 
-  // Compute the human-friendly display name/label to use for the theme by
-  // evaluating any tokens used (ie: ${version}).
-  const parsedThemeLabel = parseThemeLabel(themeDescriptor.label, json);
-
   // Generate a sub-folder name to use for the theme.
-  const themeDirName = generateThemeDirName(parsedThemeLabel);
+  const themeDirName = generateThemeDirName(themeDescriptor.label);
 
   // Compute the absolute path to the current theme's sub-folder in the host's
   // theme output directory.
@@ -83,7 +78,7 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
   const themeExists = await fs.pathExists(absThemeSrcPath);
 
   if (!themeExists) {
-    throw new Error(`Theme ${log.chalk.blue(parsedThemeLabel)} could not be found.`);
+    throw new Error(`Theme ${log.chalk.blue(themeDescriptor.label)} could not be found.`);
   }
 
 
@@ -100,7 +95,7 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
   const manifest = {
     name: getUnscopedName(json.name),
     version: json.version,
-    publisher: json.author.name,
+    publisher: json.author?.name,
     engines: {
       vscode: `^${vsCodeVersion}`
     },
@@ -110,7 +105,7 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
     contributes: {
       themes: [
         {
-          label: parsedThemeLabel,
+          label: themeDescriptor.label,
           path: path.relative(absThemeOutDir, absThemeOutPath),
           uiTheme: themeDescriptor.uiTheme || 'vs-dark'
         }
@@ -128,15 +123,15 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
 
     const theme = await loadThemeFromModule(absThemeSrcPath);
 
-    log.verbose(log.prefix('compile'), `Loaded theme ${log.chalk.blue(parsedThemeLabel)} from ${log.chalk.green(absThemeSrcPath)}.`);
+    log.verbose(log.prefix('compile'), `Loaded theme ${log.chalk.blue(themeDescriptor.label)} from ${log.chalk.green(absThemeSrcPath)}.`);
 
     // Write theme JSON.
     await fs.writeJson(absThemeOutPath, theme, {spaces: 2});
 
-    log.info(log.prefix('compile'), `Wrote theme ${log.chalk.blue(parsedThemeLabel)} to ${log.chalk.green(absThemeOutPath)}.`);
+    log.info(log.prefix('compile'), `Wrote theme ${log.chalk.blue(themeDescriptor.label)} to ${log.chalk.green(absThemeOutPath)}.`);
   } catch (err) {
     if (err.message.match(/ENOENT/g)) {
-      log.error(log.prefix('compile'), `Theme ${log.chalk.blue(parsedThemeLabel)} does not exist; skipping compilation.`);
+      log.error(log.prefix('compile'), `Theme ${log.chalk.blue(themeDescriptor.label)} does not exist; skipping compilation.`);
       return;
     }
 

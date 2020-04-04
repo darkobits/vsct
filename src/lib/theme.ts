@@ -1,4 +1,4 @@
-import {LooseObject, FormattingDescriptor} from 'etc/types';
+import {FormattingDescriptor} from 'etc/types';
 import {merge} from 'lib/misc';
 
 
@@ -23,8 +23,8 @@ class ColorSettings {
   /**
    * Adds the provided color settings object to the theme's color settings.
    */
-  add(colorSettings: LooseObject) {
-    merge(this, colorSettings, true);
+  add(colorSettings: {[key: string]: string}) {
+    merge(this, colorSettings as any, true);
   }
 }
 

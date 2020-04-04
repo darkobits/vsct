@@ -29,9 +29,6 @@ jest.mock('lib/misc', () => {
         __THEME_MODULE__: true
       };
     }),
-    parseThemeLabel: jest.fn(() => {
-      return '__PARSED_THEME_LABEL__';
-    }),
     getUnscopedName: jest.fn()
   };
 });
@@ -56,7 +53,7 @@ describe('compile', () => {
       name: 'foo',
       version: '9000',
       author: {name: 'Frodo'}
-    };
+    } as any;
 
     await compile({args, config, json, root: ROOT_DIR});
 
