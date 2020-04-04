@@ -39,7 +39,7 @@ describe('install', () => {
     themes: [
       {
         label: 'Muh Theme',
-        main: './muh-theme.js'
+        path: './muh-theme.js'
       }
     ]
   };

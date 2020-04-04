@@ -37,7 +37,7 @@ export interface CompileThemeToJsonOptions {
   json: LooseObject;
 
   /**
-   * Theme descriptor object from the user's .vsctrc file.
+   * Theme descriptor object from the user's VSCT configuration file.
    */
   themeDescriptor: ThemeDescriptor;
 }
@@ -53,7 +53,7 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
   log.verbose(log.prefix('compile'), 'Preparing output directories.');
 
   // Compute absolute path to the theme module.
-  const absThemeSrcPath = path.resolve(absBaseDir, themeDescriptor.main);
+  const absThemeSrcPath = path.resolve(absBaseDir, themeDescriptor.path);
 
   // Get the base file name of the theme module.
   const themeBaseName = path.parse(absThemeSrcPath).name;
@@ -62,9 +62,10 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
   // evaluating any tokens used (ie: ${version}).
   const parsedThemeLabel = parseThemeLabel(themeDescriptor.label, json);
 
-  // Generate a subfolder name to use for the theme.
+  // Generate a sub-folder name to use for the theme.
   const themeDirName = generateThemeDirName(parsedThemeLabel);
-  // Compute the absolute path to the current theme's subfolder in the host's
+
+  // Compute the absolute path to the current theme's sub-folder in the host's
   // theme output directory.
   const absThemeOutDir = path.resolve(absOutDir, themeDirName);
 
@@ -122,44 +123,24 @@ async function compileThemeToJson({absBaseDir, absOutDir, themeDescriptor, json}
 
   // ----- [4a] Load & Compile Theme -------------------------------------------
 
-
-  if (themeDescriptor.type === 'uncompiled' || themeDescriptor.type === undefined) {
-    let theme;
-
+  try {
     log.verbose(log.prefix('compile'), 'Loading & compiling theme.');
 
-    try {
-      theme = await loadThemeFromModule(absThemeSrcPath);
-    } catch (err) {
-      if (err.message.match(/ENOENT/g)) {
-        log.error(log.prefix('compile'), `Theme ${log.chalk.blue(parsedThemeLabel)} does not exist; skipping compilation.`);
-        return;
-      }
-
-      throw err;
-    }
+    const theme = await loadThemeFromModule(absThemeSrcPath);
 
     log.verbose(log.prefix('compile'), `Loaded theme ${log.chalk.blue(parsedThemeLabel)} from ${log.chalk.green(absThemeSrcPath)}.`);
 
     // Write theme JSON.
     await fs.writeJson(absThemeOutPath, theme, {spaces: 2});
+
     log.info(log.prefix('compile'), `Wrote theme ${log.chalk.blue(parsedThemeLabel)} to ${log.chalk.green(absThemeOutPath)}.`);
+  } catch (err) {
+    if (err.message.match(/ENOENT/g)) {
+      log.error(log.prefix('compile'), `Theme ${log.chalk.blue(parsedThemeLabel)} does not exist; skipping compilation.`);
+      return;
+    }
 
-    return;
-  }
-
-
-  // ----- [4b] Copy Pre-Compiled Theme ----------------------------------------
-
-
-  if (themeDescriptor.type === 'precompiled') {
-    log.verbose(log.prefix('compile'), 'Loading pre-compiled theme.');
-
-    await fs.move(absThemeSrcPath, absThemeOutPath);
-
-    log.verbose(log.prefix('compile'), `Copied theme ${log.chalk.blue(parsedThemeLabel)} ${log.chalk.dim('(pre-compiled)')}.`);
-
-    return;
+    throw err;
   }
 }
 

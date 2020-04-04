@@ -46,8 +46,8 @@ async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, d
 
 export default async function start({args, config, root, json}: CLIHandlerOptions) {
   // Get a unique list of absolute paths resolved from the "main" entry in each
-  // theme descriptor object in the user's .vsctrc file.
-  const absThemeDirs = uniq(config.themes.map(themeDescriptor => path.parse(path.resolve(root, themeDescriptor.main)).dir));
+  // theme descriptor object in the user's VSCT configuration file.
+  const absThemeDirs = uniq(config.themes.map(themeDescriptor => path.parse(path.resolve(root, themeDescriptor.path)).dir));
 
   // Create a watcher that watches each of the above directories.
   const watcher = chokidar.watch(absThemeDirs, {

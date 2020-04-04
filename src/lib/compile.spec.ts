@@ -47,7 +47,7 @@ describe('compile', () => {
       themes: [
         {
           label: 'Foo Theme',
-          main: './foo.js'
+          path: './foo.js'
         }
       ]
     };

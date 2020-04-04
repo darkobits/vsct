@@ -1,45 +1,15 @@
-/**
- * ===== Theme Generator =======================================================
- *
- * Provides users with a concise, semantic, type-safe way to define themes.
- *
- * @example
- *
- * import Theme from '@darkobits/vsct';
- *
- * export default new Theme(t => {
- *   t.tokenColors.add({
- *     settings: {...},
- *     scope: [...]
- *   });
- *
- *   t.colors.add({
- *     'editor.foreground': '#FAFAFA'
- *   });
- * });
- *
- * Related:
- * - https://github.com/Microsoft/vscode/tree/master/src/vs/workbench/services/themes/common/colorThemeSchema.ts
- */
-import {LooseObject} from '../etc/types';
+import {LooseObject, FormattingDescriptor} from 'etc/types';
 import {merge} from 'lib/misc';
 
 
 /**
- * Shape of the object describing a single TextMate formatting rule, which may
- * contain multiple scopes.
- */
-export interface FormattingDescriptor {
-  name?: string;
-  settings: LooseObject;
-  scope: string | Array<string>;
-}
-
-
-/**
- * An array of formatting descriptors with an "add" method for consistency.
+ * Array of TextMate formatting descriptors for syntax highlighting.
  */
 class ScopeDescriptorCollection extends Array<FormattingDescriptor> {
+  /**
+   * Adds the provided formatting descriptor to the theme's array of formatting
+   * descriptors.
+   */
   add(descriptor: FormattingDescriptor) {
     this.push(descriptor);
   }
@@ -47,10 +17,12 @@ class ScopeDescriptorCollection extends Array<FormattingDescriptor> {
 
 
 /**
- * VS Code GUI color settings are just a plain object. An "add" method has been
- * added for consistency.
+ * Object mapping VS Code color settings to color values.
  */
-class ColorSettings extends Object {
+class ColorSettings {
+  /**
+   * Adds the provided color settings object to the theme's color settings.
+   */
   add(colorSettings: LooseObject) {
     merge(this, colorSettings, true);
   }
@@ -58,7 +30,7 @@ class ColorSettings extends Object {
 
 
 /**
- * Shape of the theme object that theme generation functions should return or,
+ * Shape of the theme object that theme generation functions should return, or
  * the shape of the object that may be passed directly to the Theme constructor.
  */
 export interface ThemeDefinition {
@@ -73,15 +45,40 @@ export interface ThemeDefinition {
 export type ThemeDefinitionFunction = (theme: ThemeDefinition) => void;
 
 
-export default class ThemeGenerator implements ThemeDefinition {
-  tokenColors = new ScopeDescriptorCollection();
-  colors = new ColorSettings();
+/**
+ * Provides a concise, declarative, type-safe way to define themes. It is not
+ * necessary to define themes using this helper as long as the object exported
+ * exported by a module can be serialized into a valid theme file.
+ *
+ * @example
+ *
+ * ```ts
+ * import ThemeFactory from '@darkobits/vsct';
+ *
+ * export default ThemeFactory(theme => {
+ *   // Use TextMate formatting rules for syntax highlighting.
+ *   theme.tokenColors.add({
+ *     scope: [...],
+ *     settings: {...}
+ *   });
+ *
+ *   // Use VS Code style tokens to set UI colors.
+ *   theme.colors.add({
+ *     'editor.foreground': '#FAFAFA'
+ *   });
+ * });
+ * ```
+ *
+ * Related:
+ * - https://github.com/Microsoft/vscode/tree/master/src/vs/workbench/services/themes/common/colorThemeSchema.ts
+ */
+export default function ThemeFactory(themeDefinitionFn: ThemeDefinitionFunction): ThemeDefinition {
+  const theme = {
+    tokenColors: new ScopeDescriptorCollection(),
+    colors: new ColorSettings()
+  };
 
-  constructor(themeOrThemeFn: ThemeDefinition | ThemeDefinitionFunction) {
-    if (typeof themeOrThemeFn === 'function') {
-      themeOrThemeFn(this);
-    } else {
-      merge(this, themeOrThemeFn);
-    }
-  }
+  themeDefinitionFn(theme);
+
+  return theme;
 }

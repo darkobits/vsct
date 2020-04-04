@@ -1,4 +1,4 @@
-import Theme from './theme';
+import ThemeFactory from './theme';
 
 
 describe('Theme', () => {
@@ -13,7 +13,7 @@ describe('Theme', () => {
         ]
       };
 
-      const theme = new Theme(t => {
+      const theme = ThemeFactory(t => {
         t.tokenColors.add(tokenColorsDescriptor);
       });
 
@@ -34,7 +34,7 @@ describe('Theme', () => {
         'baz.qux': '#00FFFF'
       };
 
-      const theme = new Theme(t => {
+      const theme = ThemeFactory(t => {
         t.colors.add(colorGroupDescriptor);
       });
 
