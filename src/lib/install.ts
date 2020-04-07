@@ -7,20 +7,32 @@
  */
 import path from 'path';
 import fs from 'fs-extra';
-import {EXTENSIONS_DIR} from 'etc/constants';
-import {CLIHandlerOptions} from 'etc/types';
-import log from 'lib/log';
+import {NormalizedPackageJson} from 'read-pkg-up';
 
-import {generateThemeDirName} from 'lib/misc';
+import {EXTENSIONS_DIR} from 'etc/constants';
+import {CLIHandlerOptions, ThemeDescriptor} from 'etc/types';
+import log from 'lib/log';
+import {toDirectoryName, parsePackageName} from 'lib/misc';
 
 
 /**
  * Provided a theme's base directory name and the host package's package.json,
  * returns the directory name that should be used when creating symlinks in the
- * VS Code themes folder.
+ * VS Code themes folder. Directories in the VS Code extensions folder should
+ * follow the pattern "<author name>.<extension name>".
  */
-export function generateVsCodeThemeDirectoryName(json: CLIHandlerOptions['json'], themeDirName: string): string {
-  return `${json.author?.name?.toLowerCase()}.${themeDirName.toLowerCase()}`;
+export function generateVsCodeThemeDirectoryName(packageJson: NormalizedPackageJson, themeDescriptor: ThemeDescriptor): string {
+  if (packageJson.author?.name) {
+    return `${toDirectoryName(packageJson.author.name)}.${toDirectoryName(parsePackageName(packageJson.name).name)}`;
+  }
+
+  const packageScope = parsePackageName(packageJson.name).scope;
+
+  if (packageScope) {
+    return `${toDirectoryName(packageScope)}.${toDirectoryName(parsePackageName(packageJson.name).name)}`;
+  }
+
+  return toDirectoryName(packageJson.name);
 }
 
 
@@ -30,8 +42,8 @@ export function generateVsCodeThemeDirectoryName(json: CLIHandlerOptions['json']
  * directory. This assumes that "vsct compile" has been run first.
  */
 export default async function install({args, root, config, json}: CLIHandlerOptions) {
-  // Compute the absolute path to the output directory.
-  const absThemesDir = path.resolve(root, config.outDir);
+  // Compute the absolute path to the host package's theme output directory.
+  const absThemesSrcDir = path.resolve(root, config.outDir);
 
   if (!config.themes || config.themes.length === 0) {
     log.warn(log.prefix('install'), 'Configuration file did not define any themes.');
@@ -39,25 +51,20 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
   }
 
   return Promise.all(config.themes.map(async themeDescriptor => {
-    // Generate a sub-folder name to use for the theme.
-    const themeDirName = generateThemeDirName(themeDescriptor.label);
-
-    // Compute the absolute path to the theme's output folder.
-    const absThemeOutDir = path.resolve(absThemesDir, themeDirName);
+    // Compute the absolute path to the theme's source folder.
+    const absThemeSrcDir = path.resolve(absThemesSrcDir);
 
     // Compute the absolute path to the symlink we will create in the VS Code
     // themes folder.
-    const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName(json, themeDirName));
-    log.silly(log.prefix('install'), `Symlink will be created at: ${absSymlinkPath}`);
+    const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName(json, themeDescriptor));
 
     // Determine if a symlink already exists.
     const symlinkExists = await fs.pathExists(absSymlinkPath);
-    log.silly(log.prefix('install'), 'Symlink does not exist; it will be created.');
 
     if (symlinkExists) {
       const linkTarget = await fs.realpath(absSymlinkPath);
 
-      if (linkTarget === absThemeOutDir) {
+      if (linkTarget === absThemeSrcDir) {
         // This flag is only used internally by the "start" command to suppress
         // this notification on re-compilations.
         if (!args.silent) {
@@ -71,8 +78,8 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
       await fs.unlink(absSymlinkPath);
     }
 
-    await fs.ensureSymlink(absThemeOutDir, absSymlinkPath);
-    log.verbose(log.prefix('install'), `Sym-linked ${log.chalk.green(absSymlinkPath)} => ${log.chalk.green(absThemeOutDir)}.`);
+    await fs.ensureSymlink(absThemeSrcDir, absSymlinkPath);
+    log.verbose(log.prefix('install'), `Sym-linked ${log.chalk.green(absSymlinkPath)} => ${log.chalk.green(absThemeSrcDir)}.`);
     log.info(log.prefix('install'), `Theme ${log.chalk.blue(themeDescriptor.label)} installed.`);
   }));
 }

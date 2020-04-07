@@ -27,10 +27,7 @@
     "bottleneck": "^2.19.5",
     "chokidar": "^3.3.1",
     "color": "^3.1.2",
-    "execa": "^4.0.0",
     "fs-extra": "^9.0.0",
-    "nodemon": "^2.0.2",
-    "rc": "^1.2.8",
     "read-pkg-up": "^7.0.1",
     "traverse": "^0.6.6"
   },
@@ -38,8 +35,8 @@
     "@darkobits/ts-unified": "^4.0.0-beta.2",
     "@types/color": "^3.0.1",
     "@types/fs-extra": "^8.1.0",
-    "@types/jest": "^25.1.4",
-    "@types/node": "^13.9.8",
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.11.0",
     "@types/traverse": "^0.6.32"
   }
 }

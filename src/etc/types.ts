@@ -41,16 +41,3 @@ export interface CLIHandlerOptions {
   config: VSCTConfiguration;
   json: NormalizedPackageJson;
 }
-
-
-/**
- * Shape of the object describing a single TextMate formatting rule, which may
- * contain multiple scopes.
- */
-export interface FormattingDescriptor {
-  name?: string;
-  scope: string | Array<string>;
-  settings: {
-    [index: string]: string;
-  };
-}

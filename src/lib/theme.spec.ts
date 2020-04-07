@@ -5,12 +5,12 @@ describe('Theme', () => {
   describe('adding token colors', () => {
     it('should have the correct token colors', () => {
       const tokenColorsDescriptor = {
-        settings: {
-          foo: 'bar'
-        },
         scope: [
           'muh.scope'
-        ]
+        ],
+        settings: {
+          foreground: 'red'
+        }
       };
 
       const theme = ThemeFactory(t => {

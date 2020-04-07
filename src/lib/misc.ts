@@ -4,47 +4,15 @@
  * This module contains several various utility functions.
  */
 import path from 'path';
-import importUnique from '@darkobits/import-unique';
-import execa from 'execa';
 import fs from 'fs-extra';
-import traverse from 'traverse';
 
 
 /**
- * Provided a path to a theme module, loads and validates the module.
+ * Provided a string, returns a new string with all uppercase characters
+ * lower-cased and all whitespace replaced with the '-' character.
  */
-export async function loadThemeFromModule(absModulePath: string): Promise<any> {
-  await fs.access(absModulePath);
-
-  // Load/parse the indicated theme file.
-  const module = importUnique(absModulePath);
-  const theme = module.default ? module.default : module;
-
-  // Scrub theme for circular references and functions.
-  traverse(theme).forEach(function (node) {
-    if (this.circular) {
-      throw new Error('Theme contains circular references.');
-    }
-
-    if (typeof node === 'function') {
-      throw new Error('Theme contains non-serializable entities.');
-    }
-  });
-
-  // If there is anything else that the theme exported that's not valid JSON,
-  // this will throw.
-  JSON.stringify(theme);
-
-  return theme;
-}
-
-
-/**
- * Provided a parsed theme label, returns a directory name that will be used to
- * contain the theme's JSON and manifest in the host's output directory.
- */
-export function generateThemeDirName(themeLabel: string): string {
-  return themeLabel.replace(/[^\w\s.-]/g, '').replace(/\s/g, '-').toLowerCase();
+export function toDirectoryName(input: string): string {
+  return input.replace(/[^\w\s.-]/g, '').replace(/\s/g, '-').toLowerCase();
 }
 
 
@@ -97,15 +65,6 @@ export function clearRequireCache() {
 
 
 /**
- * Returns the version of VS Code currently installed on the system.
- */
-export async function getVsCodeVersion() {
-  const result = await execa('code', ['--version']);
-  return result.stdout.split('\n')[0];
-}
-
-
-/**
  * Performs an in-place merge of the keys in object b into object a.
  */
 export function merge<O extends {[index: string]: any}>(a: O, b: O, throwOnDuplicate = false): void {
@@ -120,13 +79,24 @@ export function merge<O extends {[index: string]: any}>(a: O, b: O, throwOnDupli
 
 
 /**
- * Strips the scope from the provided package name, if it has one.
- *
- * @example
- *
- * getUnscopedName('@foo/bar') => 'bar'
- * getUnscopedName('bar') => 'bar'
+ * Provided a valid NPM package name, returns an object containing its scope and
+ * name parts.
  */
-export function getUnscopedName(fullName: string): string {
-  return fullName.split('/').slice(-1)[0];
+export function parsePackageName(fullName: string) {
+  const match = /^(?:@(?<scope>.*)\/)?(?:(?<name>.*))$/g.exec(fullName);
+
+  if (!match) {
+    throw new Error(`Unable to parse package name: "${fullName}".`);
+  }
+
+  const {groups} = match;
+
+  if (!groups) {
+    throw new Error(`Unable to parse package name: "${fullName}".`);
+  }
+
+  return {
+    scope: groups.scope,
+    name: groups.name
+  };
 }

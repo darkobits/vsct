@@ -1,31 +1,28 @@
-import {FormattingDescriptor} from 'etc/types';
+import Color from 'lib/color';
 import {merge} from 'lib/misc';
 
 
 /**
- * Array of TextMate formatting descriptors for syntax highlighting.
+ * Object mapping VS Code color settings to color values. Colors may be string
+ * literals or an instance of the VSCT Color helper class.
  */
-class ScopeDescriptorCollection extends Array<FormattingDescriptor> {
-  /**
-   * Adds the provided formatting descriptor to the theme's array of formatting
-   * descriptors.
-   */
-  add(descriptor: FormattingDescriptor) {
-    this.push(descriptor);
-  }
+interface ColorSettings {
+  [index: string]: Color | string;
 }
 
 
 /**
- * Object mapping VS Code color settings to color values.
+ * Shape of the object describing a single TextMate formatting rule, which may
+ * contain multiple scopes.
  */
-class ColorSettings {
-  /**
-   * Adds the provided color settings object to the theme's color settings.
-   */
-  add(colorSettings: {[key: string]: string}) {
-    merge(this, colorSettings as any, true);
-  }
+export interface FormattingDescriptor {
+  name?: string;
+  scope: string | Array<string>;
+  settings: {
+    foreground?: Color | string;
+    background?: Color | string;
+    fontStyle?: string;
+  };
 }
 
 
@@ -34,15 +31,34 @@ class ColorSettings {
  * the shape of the object that may be passed directly to the Theme constructor.
  */
 export interface ThemeDefinition {
-  tokenColors: ScopeDescriptorCollection;
+  tokenColors: Array<FormattingDescriptor>;
   colors: ColorSettings;
 }
 
 
 /**
- * Signature of the function provided to the Theme constructor.
+ * Shape of the object passed to ThemeGeneratorCallback.
  */
-export type ThemeDefinitionFunction = (theme: ThemeDefinition) => void;
+export interface ThemeGenerator {
+  tokenColors: {
+    /**
+     * Adds the provided text formatting descriptor to the theme.
+     */
+    add(descriptor: FormattingDescriptor): void;
+  };
+  colors: {
+    /**
+     * Adds the provided color settings object to the theme's color settings.
+     */
+    add(colorSettings: ColorSettings): void;
+  };
+}
+
+
+/**
+ * Signature of the user-provided callback to ThemeFactory.
+ */
+export type ThemeGenerationCallback = (themeGenerator: ThemeGenerator) => void;
 
 
 /**
@@ -72,13 +88,24 @@ export type ThemeDefinitionFunction = (theme: ThemeDefinition) => void;
  * Related:
  * - https://github.com/Microsoft/vscode/tree/master/src/vs/workbench/services/themes/common/colorThemeSchema.ts
  */
-export default function ThemeFactory(themeDefinitionFn: ThemeDefinitionFunction): ThemeDefinition {
-  const theme = {
-    tokenColors: new ScopeDescriptorCollection(),
-    colors: new ColorSettings()
+export default function ThemeFactory(themeGeneratorFn: ThemeGenerationCallback): ThemeDefinition {
+  const theme: ThemeDefinition = {
+    tokenColors: [],
+    colors: {}
   };
 
-  themeDefinitionFn(theme);
+  themeGeneratorFn({
+    tokenColors: {
+      add(descriptor) {
+        theme.tokenColors.push(descriptor);
+      }
+    },
+    colors: {
+      add(colorSettings) {
+        merge(theme.colors, colorSettings, true);
+      }
+    }
+  } as ThemeGenerator);
 
   return theme;
 }

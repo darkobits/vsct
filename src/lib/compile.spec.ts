@@ -1,75 +1,76 @@
 import path from 'path';
 import fs from 'fs-extra';
 import {Arguments} from 'yargs';
-import defaultConfig from 'etc/default-config';
+import {toDirectoryName} from 'lib/misc';
 import compile from './compile';
 
 
 jest.mock('fs-extra', () => {
   return {
+    access: jest.fn(() => true),
     ensureDir: jest.fn(() => true),
     move: jest.fn(),
+    copyFile: jest.fn(),
     pathExists: jest.fn(() => true),
     readJson: jest.fn(),
-    writeJson: jest.fn()
+    writeJson: jest.fn(),
+    remove: jest.fn()
   };
 });
 
-
-jest.mock('lib/misc', () => {
-  return {
-    generateThemeDirName: jest.fn(() => {
-      return '__THEME_DIR__';
-    }),
-    getVsCodeVersion: jest.fn(() => {
-      return '__VS_CODE_VERSION__';
-    }),
-    loadThemeFromModule: jest.fn(() => {
-      return {
-        __THEME_MODULE__: true
-      };
-    }),
-    getUnscopedName: jest.fn()
+jest.mock('@darkobits/import-unique', () => {
+  return () => {
+    return {
+      __THEME_MODULE__: {}
+    };
   };
 });
 
 
 describe('compile', () => {
   const args = {} as Arguments;
+  const AUTHOR_NAME = '__AUTHOR_NAME__';
+  const THEME_NAME = '__THEME_NAME__';
+  const OUT_DIR = '__OUT_DIR__';
   const ROOT_DIR = path.join('/root', 'theme', 'dir');
+  const THEME_PATH = './__THEME_MODULE__.js';
 
   it('should compile each theme in the provided configuration object', async () => {
     const config = {
-      ...defaultConfig,
+      outDir: OUT_DIR,
       themes: [
         {
-          label: 'Foo Theme',
-          path: './foo.js'
+          label: 'FooBLUE Theme',
+          path: THEME_PATH
         }
       ]
-    };
+    } as any;
 
     const json = {
-      name: 'foo',
+      name: THEME_NAME,
       version: '9000',
-      author: {name: 'Frodo'}
+      author: {
+        name: AUTHOR_NAME
+      }
     } as any;
 
     await compile({args, config, json, root: ROOT_DIR});
 
     // @ts-ignore
-    expect(fs.ensureDir.mock.calls[0][0]).toEqual(path.join(ROOT_DIR, 'themes', '__THEME_DIR__'));
+    expect(fs.ensureDir.mock.calls[0][0]).toEqual(path.join(ROOT_DIR, OUT_DIR));
+
     // @ts-ignore
-    expect(fs.pathExists.mock.calls[0][0]).toEqual(path.join(ROOT_DIR, 'foo.js'));
-    // @ts-ignore
-    expect(fs.writeJson.mock.calls[0][0]).toEqual(path.join(ROOT_DIR, 'themes', '__THEME_DIR__', 'package.json'));
+    expect(fs.writeJson.mock.calls[1][0]).toEqual(path.join(ROOT_DIR, OUT_DIR, 'package.json'));
+
     // @ts-ignore
     expect(fs.writeJson.mock.calls[0][1]).toBeTruthy();
+
     // @ts-ignore
-    expect(fs.writeJson.mock.calls[1][0]).toEqual(path.join(ROOT_DIR, 'themes', '__THEME_DIR__', 'foo.json'));
+    expect(fs.writeJson.mock.calls[0][0]).toEqual(path.join(ROOT_DIR, OUT_DIR, `${toDirectoryName(THEME_NAME)}-0.json`));
+
     // @ts-ignore
-    expect(fs.writeJson.mock.calls[1][1]).toEqual({
-      __THEME_MODULE__: true
+    expect(fs.writeJson.mock.calls[0][1]).toEqual({
+      __THEME_MODULE__: {}
     });
   });
 });
