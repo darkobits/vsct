@@ -9,15 +9,13 @@
   <a href="https://github.com/sindresorhus/xo"><img src="https://img.shields.io/badge/code_style-XO-e271a5.svg?style=flat-square"></a>
 </p>
 
-A framework for creating VS Code themes and distributing them via NPM.
+A tool for creating VS Code themes.
 
 ## Install
 
 ```
 npm i @darkobits/vsct
 ```
-
-> Note: VSCT handles creating symlinks between the VS Code themes directory and your theme's installation folder, so it **should not** be installed as a dev dependency.
 
 ## Use
 
