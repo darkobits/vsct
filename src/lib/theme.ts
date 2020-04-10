@@ -1,28 +1,49 @@
+import * as R from 'ramda';
 import Color from 'lib/color';
 import {merge} from 'lib/misc';
-
-
-/**
- * Object mapping VS Code color settings to color values. Colors may be string
- * literals or an instance of the VSCT Color helper class.
- */
-interface ColorSettings {
-  [index: string]: Color | string;
-}
 
 
 /**
  * Shape of the object describing a single TextMate formatting rule, which may
  * contain multiple scopes.
  */
-export interface FormattingDescriptor {
+export interface GrammarDescriptor {
+  [index: string]: any;
   name?: string;
   scope: string | Array<string>;
   settings: {
     foreground?: Color | string;
     background?: Color | string;
+    fontStyle?: {
+      bold?: boolean;
+      italic?: boolean;
+      underline?: boolean;
+    };
+  };
+}
+
+
+/**
+ * Shape of final grammar descriptor objects as they will appear in compiled
+ * themes.
+ */
+export interface TransformedGrammarDescriptor {
+  name?: string;
+  scope: string | Array<string>;
+  settings: {
+    foreground?: string;
+    background?: string;
     fontStyle?: string;
   };
+}
+
+
+/**
+ * Object mapping VS Code color settings to color values. Colors may be string
+ * literals or an instance of the VSCT Color helper class.
+ */
+export interface ColorSettings {
+  [index: string]: Color | string;
 }
 
 
@@ -31,20 +52,20 @@ export interface FormattingDescriptor {
  * the shape of the object that may be passed directly to the Theme constructor.
  */
 export interface ThemeDefinition {
-  tokenColors: Array<FormattingDescriptor>;
+  tokenColors: Array<TransformedGrammarDescriptor>;
   colors: ColorSettings;
 }
 
 
 /**
- * Shape of the object passed to ThemeGeneratorCallback.
+ * Shape of the object passed to ThemeGeneratorCallback functions.
  */
 export interface ThemeGenerator {
   tokenColors: {
     /**
      * Adds the provided text formatting descriptor to the theme.
      */
-    add(descriptor: FormattingDescriptor): void;
+    add(descriptor: GrammarDescriptor): void;
   };
   colors: {
     /**
@@ -97,7 +118,35 @@ export default function ThemeFactory(themeGeneratorFn: ThemeGenerationCallback):
   themeGeneratorFn({
     tokenColors: {
       add(descriptor) {
-        theme.tokenColors.push(descriptor);
+        theme.tokenColors.push(R.evolve({
+          settings: {
+            /**
+             * These two transformers are here mostly to make TypeScript happy;
+             * Color instances would otherwise be serialized at theme
+             * compile-time.
+             */
+            foreground: value => value.toString(),
+            background: value => value.toString(),
+
+            /**
+             * Transforms a fontStyle object into a space-delimited string of
+             * 'bold', 'italic', and/or 'underline' keywords as required by
+             * the TextMate spec.
+             *
+             * @example
+             *
+             * {
+             *   bold: true,
+             *   italic: true
+             * } => 'bold italic'
+             */
+            fontStyle: value => {
+              return value ? R.join(' ', R.reduce((fontStylesArr, [fontStyleName, fontStyleValue]) => {
+                return fontStyleValue ? [...fontStylesArr, fontStyleName] : fontStylesArr;
+              }, [], R.toPairs(value))) : undefined;
+            }
+          }
+        }, descriptor));
       }
     },
     colors: {
