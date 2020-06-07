@@ -117,7 +117,7 @@ export default function ThemeFactory(themeGeneratorFn: ThemeGenerationCallback):
 
   themeGeneratorFn({
     tokenColors: {
-      add(descriptor) {
+      add: descriptor => {
         theme.tokenColors.push(R.evolve({
           settings: {
             /**
@@ -140,17 +140,21 @@ export default function ThemeFactory(themeGeneratorFn: ThemeGenerationCallback):
              *   italic: true
              * } => 'bold italic'
              */
-            fontStyle: value => {
-              return value ? R.join(' ', R.reduce((fontStylesArr, [fontStyleName, fontStyleValue]) => {
+            fontStyle: (value: GrammarDescriptor['settings']['fontStyle']) => {
+              if (!value) {
+                return;
+              }
+
+              return R.join(' ', R.reduce((fontStylesArr, [fontStyleName, fontStyleValue]) => {
                 return fontStyleValue ? [...fontStylesArr, fontStyleName] : fontStylesArr;
-              }, [], R.toPairs(value))) : undefined;
+              }, [] as Array<string>, R.toPairs(value)));
             }
           }
         }, descriptor));
       }
     },
     colors: {
-      add(colorSettings) {
+      add: colorSettings => {
         merge(theme.colors, colorSettings, true);
       }
     }

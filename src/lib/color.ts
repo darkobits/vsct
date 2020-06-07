@@ -19,7 +19,7 @@ function rgbToHex(value: number): string {
 }
 
 
-Color.prototype.toString = function (this: Color): string {
+Color.prototype.toString = function(this: Color): string {
   const rgb = this.rgb();
   let hexColor = ['#', rgbToHex(rgb.red()), rgbToHex(rgb.green()), rgbToHex(rgb.blue())].join('');
 
@@ -31,7 +31,7 @@ Color.prototype.toString = function (this: Color): string {
 };
 
 
-Color.prototype.toJSON = function (this: Color): any {
+Color.prototype.toJSON = function(this: Color): any {
   return this.toString();
 };
 

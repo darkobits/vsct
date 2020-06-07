@@ -16,7 +16,7 @@ import log from 'lib/log';
  * Wraps command functions to provide common logic for loading configuration
  * files and the host package's package.json.
  */
-function commonHandler(handlerFn: Function) {
+function commonHandler(handlerFn: any) {
   return async ({argv, config, configPath}: Parameters<SaffronHandler<any, VSCTConfiguration>>[0]) => {
     try {
       if (!config || !configPath) {

@@ -28,13 +28,13 @@ export async function loadThemeFromModule(absModulePath: string): Promise<any> {
   const theme = module.default ? module.default : module;
 
   // Scrub theme for circular references and functions.
-  traverse(theme).forEach(function (node) {
+  traverse(theme).forEach(function(node) {
     if (this.circular) {
       throw new Error('Theme contains circular references.');
     }
 
     if (typeof node === 'function') {
-      throw new Error('Theme contains non-serializable entities.');
+      throw new TypeError('Theme contains non-serializable entities.');
     }
   });
 
@@ -133,7 +133,7 @@ export default async function compile({config, root, json}: CLIHandlerOptions) {
     name: themeBaseName,
     displayName: json.displayName,
     version: json.version,
-    publisher: json.author?.name || scope,
+    publisher: json.author?.name ?? scope,
     repository: json.repository,
     categories: [
       'Themes'
@@ -164,7 +164,7 @@ export default async function compile({config, root, json}: CLIHandlerOptions) {
       manifest.contributes.themes.push({
         label: themeDescriptor.label,
         path: path.relative(absOutDir, dest),
-        uiTheme: themeDescriptor.uiTheme || 'vs-dark'
+        uiTheme: themeDescriptor.uiTheme ?? 'vs-dark'
       });
     } catch (err) {
       log.error(log.prefix('compile'), err.stack);

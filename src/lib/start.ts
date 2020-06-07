@@ -24,12 +24,12 @@ import {clearRequireCache, uniq} from 'lib/misc';
  * transpiler (ie: Babel) has finished writing files to its output directory.
  */
 async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, delay = 100) {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     log.info(log.prefix('start'), 'Waiting for source files.');
 
     let lastFileAddedOn = Infinity;
 
-    watcher.on('add', filePath => {
+    watcher.on('add', () => {
       lastFileAddedOn = Date.now();
     });
 
@@ -44,7 +44,7 @@ async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, d
 }
 
 
-export default async function start({args, config, root, json}: CLIHandlerOptions) {
+export default function start({args, config, root, json}: CLIHandlerOptions) {
   // Get a unique list of absolute paths resolved from the "main" entry in each
   // theme descriptor object in the user's VSCT configuration file.
   const absThemeDirs = uniq(config.themes.map(themeDescriptor => path.parse(path.resolve(root, themeDescriptor.path)).dir));
@@ -87,7 +87,7 @@ export default async function start({args, config, root, json}: CLIHandlerOption
 
   // Wrapper that invokes the above function and silences errors from dropped
   // jobs.
-  async function invokeLimitedRecompile() {
+  const invokeLimitedRecompile = async () => {
     try {
       await limitedRecompile.withOptions({
         priority: Date.now()
@@ -102,25 +102,25 @@ export default async function start({args, config, root, json}: CLIHandlerOption
       log.error(log.prefix('start'), `Error during compilation: ${err.stack}`);
       throw err;
     }
-  }
+  };
 
-  watcher.on('ready', async () => {
+  watcher.on('ready', () => {
     log.verbose(log.prefix('start'), 'Watcher ready.');
 
     absThemeDirs.forEach(themeDir => {
       log.info(log.prefix('start'), `Watching ${log.chalk.green(themeDir)}.`);
     });
 
-    return invokeLimitedRecompile();
+    void invokeLimitedRecompile();
   });
 
-  watcher.on('add', async filePath => {
+  watcher.on('add', filePath => {
     log.verbose(log.prefix('watch'), `Added: ${log.chalk.green(filePath)}.`);
-    return invokeLimitedRecompile();
+    void invokeLimitedRecompile();
   });
 
-  watcher.on('change', async filePath => {
+  watcher.on('change', filePath => {
     log.verbose(log.prefix('watch'), `Changed: ${log.chalk.green(filePath)}.`);
-    return invokeLimitedRecompile();
+    void invokeLimitedRecompile();
   });
 }

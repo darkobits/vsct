@@ -12,7 +12,7 @@ import fs from 'fs-extra';
  * lower-cased and all whitespace replaced with the '-' character.
  */
 export function toDirectoryName(input: string): string {
-  return input.replace(/[^\w\s.-]/g, '').replace(/\s/g, '-').toLowerCase();
+  return input.replace(/[^\s\w.-]/g, '').replace(/\s/g, '-').toLowerCase();
 }
 
 
@@ -83,7 +83,7 @@ export function merge<O extends {[index: string]: any}>(a: O, b: O, throwOnDupli
  * name parts.
  */
 export function parsePackageName(fullName: string) {
-  const match = /^(?:@(?<scope>.*)\/)?(?:(?<name>.*))$/g.exec(fullName);
+  const match = /^(?:@(?<scope>.*)\/)?(?<name>.*)$/g.exec(fullName);
 
   if (!match) {
     throw new Error(`Unable to parse package name: "${fullName}".`);

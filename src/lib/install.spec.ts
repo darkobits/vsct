@@ -12,10 +12,12 @@ jest.mock('fs-extra', () => {
 
   return {
     pathExists: jest.fn(() => pathExistsReturnValue),
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     _setPathExistsReturnValue: (value: any) => {
       pathExistsReturnValue = value;
     },
     realpath: jest.fn(() => realpathReturnValue),
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     _setRealpathReturnValue: (value: any) => {
       realpathReturnValue = value;
     },

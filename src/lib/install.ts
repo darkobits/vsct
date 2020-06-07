@@ -10,7 +10,7 @@ import fs from 'fs-extra';
 import {NormalizedPackageJson} from 'read-pkg-up';
 
 import {EXTENSIONS_DIR} from 'etc/constants';
-import {CLIHandlerOptions, ThemeDescriptor} from 'etc/types';
+import {CLIHandlerOptions} from 'etc/types';
 import log from 'lib/log';
 import {toDirectoryName, parsePackageName} from 'lib/misc';
 
@@ -21,7 +21,7 @@ import {toDirectoryName, parsePackageName} from 'lib/misc';
  * VS Code themes folder. Directories in the VS Code extensions folder should
  * follow the pattern "<author name>.<extension name>".
  */
-export function generateVsCodeThemeDirectoryName(packageJson: NormalizedPackageJson, themeDescriptor: ThemeDescriptor): string {
+export function generateVsCodeThemeDirectoryName(packageJson: NormalizedPackageJson): string {
   if (packageJson.author?.name) {
     return `${toDirectoryName(packageJson.author.name)}.${toDirectoryName(parsePackageName(packageJson.name).name)}`;
   }
@@ -56,7 +56,7 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
 
     // Compute the absolute path to the symlink we will create in the VS Code
     // themes folder.
-    const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName(json, themeDescriptor));
+    const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName(json));
 
     // Determine if a symlink already exists.
     const symlinkExists = await fs.pathExists(absSymlinkPath);
