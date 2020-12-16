@@ -24,7 +24,7 @@ import {clearRequireCache, uniq} from 'lib/misc';
  * transpiler (ie: Babel) has finished writing files to its output directory.
  */
 async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, delay = 100) {
-  return new Promise(resolve => {
+  return new Promise<void>(resolve => {
     log.info(log.prefix('start'), 'Waiting for source files.');
 
     let lastFileAddedOn = Infinity;
