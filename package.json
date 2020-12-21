@@ -21,9 +21,9 @@
     "prepare": "nps prepare"
   },
   "dependencies": {
-    "@darkobits/import-unique": "^1.0.5",
+    "@darkobits/import-unique": "^1.0.7",
     "@darkobits/log": "^2.0.0-beta.14",
-    "@darkobits/saffron": "^0.1.12",
+    "@darkobits/saffron": "^0.1.16",
     "bottleneck": "^2.19.5",
     "chokidar": "^3.4.0",
     "color": "^3.1.2",
@@ -33,10 +33,10 @@
     "traverse": "^0.6.6"
   },
   "devDependencies": {
-    "@darkobits/ts": "^0.2.0",
+    "@darkobits/ts": "^0.2.2",
     "@types/color": "^3.0.1",
     "@types/fs-extra": "^9.0.1",
-    "@types/ramda": "^0.27.6",
+    "@types/ramda": "^0.27.34",
     "@types/traverse": "^0.6.32"
   }
 }
