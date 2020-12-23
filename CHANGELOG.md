@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/darkobits/vsct/compare/v0.3.8...v0.4.0) (2020-12-23)
+
+
+### ✨ Features
+
+* Add theme.get and theme.set functions. ([924e700](https://github.com/darkobits/vsct/commit/924e70039a99963ec4b4c3770c1a107a193ec3b2))
+
+
+### 🏗 Chores
+
+* Use GitHub Actions. ([d33ce7d](https://github.com/darkobits/vsct/commit/d33ce7dc1668892ffdaeab4612527997fa364585))
+
 ### [0.3.8](https://github.com/darkobits/vsct/compare/v0.3.7...v0.3.8) (2020-12-21)
 
 
