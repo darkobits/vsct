@@ -1,4 +1,6 @@
+import dotProp from 'dot-prop';
 import * as R from 'ramda';
+
 import Color from 'lib/color';
 import {merge} from 'lib/misc';
 
@@ -52,6 +54,7 @@ export interface ColorSettings {
  * the shape of the object that may be passed directly to the Theme constructor.
  */
 export interface ThemeDefinition {
+  [key: string]: any;
   tokenColors: Array<TransformedGrammarDescriptor>;
   colors: ColorSettings;
 }
@@ -73,6 +76,16 @@ export interface ThemeGenerator {
      */
     add(colorSettings: ColorSettings): void;
   };
+
+  /**
+   * Use dot-prop to get an arbitrary value from the theme definition.
+   */
+  get: (path: string) => any;
+
+  /**
+   * Use dot-prop to set an arbitrary value in the theme definition.
+   */
+  set: (path: string, value: any) => void;
 }
 
 
@@ -157,6 +170,10 @@ export default function ThemeFactory(themeGeneratorFn: ThemeGenerationCallback):
       add: colorSettings => {
         merge(theme.colors, colorSettings, true);
       }
+    },
+    get: path => dotProp.get(theme, path),
+    set: (path, value) => {
+      dotProp.set(theme, path, value);
     }
   } as ThemeGenerator);
 
