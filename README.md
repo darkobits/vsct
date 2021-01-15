@@ -2,11 +2,11 @@
   <img src="https://user-images.githubusercontent.com/441546/102319602-05031400-3f30-11eb-82e9-81afbc3ce384.png" style="max-width: 100%;">
 </a>
 <p align="center">
-  <a href="https://www.npmjs.com/package/@darkobits/vsct"><img src="https://img.shields.io/npm/v/@darkobits/vsct.svg?style=flat-square"></a>
-  <a href="https://github.com/darkobits/vsct/actions?query=workflow%3Aci"><img src="https://img.shields.io/github/workflow/status/darkobits/vsct/ci/master?style=flat-square"></a>
-  <a href="https://www.codacy.com/app/darkobits/vsct"><img src="https://img.shields.io/codacy/coverage/43d139dd28af46aaaba1bbb76225f1ce.svg?style=flat-square"></a>
+    <a href="https://www.npmjs.com/package/@darkobits/vsct"><img src="https://img.shields.io/npm/v/@darkobits/vsct.svg?style=flat-square"></a>
+  <a href="https://github.com/darkobits/vsct/actions"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fdarkobits%2Fvsct%2Fbadge%3Fref%3Dmaster&style=flat-square&label=build&logo=none"></a>
+  <a href="https://app.codecov.io/gh/darkobits/vsct/branch/master"><img src="https://img.shields.io/codecov/c/github/darkobits/vsct/master?style=flat-square"></a>
   <a href="https://david-dm.org/darkobits/vsct"><img src="https://img.shields.io/david/darkobits/vsct.svg?style=flat-square"></a>
-  <a href="https://github.com/conventional-changelog/standard-version"><img src="https://img.shields.io/badge/conventional%20commits-1.0.0-027dc6.svg?style=flat-square"></a>
+  <a href="https://conventionalcommits.org"><img src="https://img.shields.io/badge/conventional%20commits-1.0.0-027dc6.svg?style=flat-square"></a>
 </p>
 
 A tool for creating VS Code themes.
@@ -128,9 +128,6 @@ export default ThemeFactory(theme => {
   theme.tokenColors.add
 });
 ```
-
-### CLI
-
 
 ### Additional Resources
 
