@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/darkobits/vsct/compare/v0.4.0...v0.4.1) (2021-05-12)
+
+
+### 📖 Documentation
+
+* Update README. ([d333dc4](https://github.com/darkobits/vsct/commit/d333dc477e01f5e51c450330cf4239151c6a5033))
+
+
+### 🏗 Chores
+
+* **deps:** Update dependencies. ([ca9545c](https://github.com/darkobits/vsct/commit/ca9545c2fd034d369be109955a166387947efa24))
+* Update log colors. ([a96a464](https://github.com/darkobits/vsct/commit/a96a464ac72cd6d6e30e4a78fd22840ba1f15578))
+
 ## [0.4.0](https://github.com/darkobits/vsct/compare/v0.3.8...v0.4.0) (2020-12-23)
 
 
