@@ -7,19 +7,19 @@
  */
 import path from 'path';
 import fs from 'fs-extra';
-import {NormalizedPackageJson} from 'read-pkg-up';
+import { NormalizedPackageJson } from 'read-pkg-up';
 
-import {EXTENSIONS_DIR} from 'etc/constants';
-import {CLIHandlerOptions} from 'etc/types';
+import { EXTENSIONS_DIR } from 'etc/constants';
+import { CLIHandlerOptions } from 'etc/types';
 import log from 'lib/log';
-import {toDirectoryName, parsePackageName} from 'lib/misc';
+import { toDirectoryName, parsePackageName } from 'lib/misc';
 
 
 /**
- * Provided a theme's base directory name and the host package's package.json,
- * returns the directory name that should be used when creating symlinks in the
- * VS Code themes folder. Directories in the VS Code extensions folder should
- * follow the pattern "<author name>.<extension name>".
+ * Provided a theme's package.json, returns the directory name that should be
+ * used when creating symlinks in the VS Code extensions folder. Directories in
+ * the VS Code extensions folder should follow the pattern:
+ * "<author name>.<extension name>".
  */
 export function generateVsCodeThemeDirectoryName(packageJson: NormalizedPackageJson): string {
   if (packageJson.author?.name) {

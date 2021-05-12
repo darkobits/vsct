@@ -83,15 +83,16 @@ async function compileThemeToJson({themeDescriptor, src, dest}: CompileThemeToJs
 
     const theme = await loadThemeFromModule(src);
 
-    log.verbose(log.prefix('compile'), `Loaded theme ${log.chalk.blue(themeDescriptor.label)} from ${log.chalk.green(src)}.`);
+    log.verbose(log.prefix('compile'), `Loaded theme ${log.chalk.blueBright(themeDescriptor.label)} from ${log.chalk.green(src)}.`);
 
     // Write theme JSON.
     await fs.writeJson(dest, theme, {spaces: 2});
 
-    log.info(log.prefix('compile'), `Wrote theme ${log.chalk.blue(themeDescriptor.label)} to ${log.chalk.green(dest)}.`);
+    log.info(log.prefix('compile'), `Wrote theme ${log.chalk.blueBright(themeDescriptor.label)} to ${log.chalk.green(dest)}.`);
   } catch (err) {
     if (err.message.match(/ENOENT/g)) {
-      log.error(log.prefix('compile'), `Theme ${log.chalk.blue(themeDescriptor.label)} does not exist; skipping compilation.`);
+      log.error(log.prefix('compile'), `Theme ${log.chalk.blueBright(themeDescriptor.label)} does not exist; skipping compilation.`);
+      log.error(log.prefix('compile'), `↳ Attempted to load theme from: ${log.chalk.green(src)}`);
       return;
     }
 
@@ -133,11 +134,10 @@ export default async function compile({config, root, json}: CLIHandlerOptions) {
     name: themeBaseName,
     displayName: json.displayName,
     version: json.version,
+    description: json.description,
     publisher: json.author?.name ?? scope,
     repository: json.repository,
-    categories: [
-      'Themes'
-    ],
+    categories: json.categories || ['Themes'],
     contributes: {
       themes: [] as Array<ThemeDescriptor>
     }

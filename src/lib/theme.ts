@@ -10,7 +10,7 @@ import {merge} from 'lib/misc';
  * contain multiple scopes.
  */
 export interface GrammarDescriptor {
-  [index: string]: any;
+  // [index: string]: any;
   name?: string;
   scope: string | Array<string>;
   settings: {
