@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "@darkobits/import-unique": "^1.0.7",
-    "@darkobits/log": "^2.0.0-beta.14",
-    "@darkobits/saffron": "^0.1.16",
+    "@darkobits/log": "^2.0.0-beta.16",
+    "@darkobits/saffron": "^0.1.17",
     "bottleneck": "^2.19.5",
     "chokidar": "^3.4.0",
     "color": "^3.1.2",
