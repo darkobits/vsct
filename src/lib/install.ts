@@ -21,18 +21,11 @@ import { toDirectoryName, parsePackageName } from 'lib/misc';
  * the VS Code extensions folder should follow the pattern:
  * "<author name>.<extension name>".
  */
-export function generateVsCodeThemeDirectoryName(packageJson: NormalizedPackageJson): string {
-  if (packageJson.author?.name) {
-    return `${toDirectoryName(packageJson.author.name)}.${toDirectoryName(parsePackageName(packageJson.name).name)}`;
-  }
-
-  const packageScope = parsePackageName(packageJson.name).scope;
-
-  if (packageScope) {
-    return `${toDirectoryName(packageScope)}.${toDirectoryName(parsePackageName(packageJson.name).name)}`;
-  }
-
-  return toDirectoryName(packageJson.name);
+export function generateVsCodeThemeDirectoryName(packageJson: NormalizedPackageJson, customName = ''): string {
+  const parsedName = parsePackageName(packageJson.name);
+  const finalAuthor = toDirectoryName(packageJson.author?.name ?? parsedName.scope);
+  const finalName = toDirectoryName(customName || parsedName.name);
+  return [finalAuthor, finalName].filter(Boolean).join('.');
 }
 
 
@@ -56,7 +49,7 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
 
     // Compute the absolute path to the symlink we will create in the VS Code
     // themes folder.
-    const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName(json));
+    const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName(json, config.installDir));
 
     // Determine if a symlink already exists.
     const symlinkExists = await fs.pathExists(absSymlinkPath);

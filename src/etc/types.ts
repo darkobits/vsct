@@ -34,6 +34,12 @@ export interface ThemeDescriptor {
  * Shape of the object defined in a user's VSCT configuration file.
  */
 export interface VSCTConfiguration {
+  /**
+   * Optional directory name to use in the VS Code extensions directory.
+   *
+   * Default: <author>.<name>
+   */
+  installDir?: string;
   outDir: string;
   themes: Array<ThemeDescriptor>;
 }
