@@ -136,5 +136,5 @@ export default ThemeFactory(theme => {
 * [VS Code Syntax Highlight Guide](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide)
 
 <a href="#top">
-  <img src="https://user-images.githubusercontent.com/441546/102315151-835bb800-3f28-11eb-8cf4-8bd74b94ddc3.png" style="max-width: 100%;">
+  <img src="https://user-images.githubusercontent.com/441546/118062198-4ff04e80-b34b-11eb-87f3-406a345d5526.png" style="max-width: 100%;">
 </a>
