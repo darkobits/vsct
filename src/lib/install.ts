@@ -22,9 +22,13 @@ import { toDirectoryName, parsePackageName } from 'lib/misc';
  * "<author name>.<extension name>".
  */
 export function generateVsCodeThemeDirectoryName(packageJson: NormalizedPackageJson, customName = ''): string {
+  if (customName) {
+    return toDirectoryName(customName);
+  }
+
   const parsedName = parsePackageName(packageJson.name);
   const finalAuthor = toDirectoryName(packageJson.author?.name ?? parsedName.scope);
-  const finalName = toDirectoryName(customName || parsedName.name);
+  const finalName = toDirectoryName(parsedName.name);
   return [finalAuthor, finalName].filter(Boolean).join('.');
 }
 
