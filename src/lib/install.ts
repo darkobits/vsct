@@ -79,7 +79,7 @@ export default async function install({args, root, config, json}: CLIHandlerOpti
     }
 
     await fs.ensureSymlink(absThemeSrcDir, absSymlinkPath);
-    log.verbose(log.prefix('install'), `Sym-linked ${log.chalk.green(absSymlinkPath)} => ${log.chalk.green(absThemeSrcDir)}.`);
+    log.verbose(log.prefix('install'), `Symlinked ${log.chalk.green(absSymlinkPath)} => ${log.chalk.green(absThemeSrcDir)}.`);
     log.info(log.prefix('install'), `Theme ${log.chalk.blue(themeDescriptor.label)} installed.`);
   }));
 }
