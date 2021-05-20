@@ -156,7 +156,8 @@ export default async function compile({config, root, json}: CLIHandlerOptions) {
 
   await Promise.all(config.themes.map(async (themeDescriptor, index) => {
     const src = path.resolve(root, themeDescriptor.path);
-    const dest = path.resolve(absOutDir, `${toDirectoryName(themeBaseName)}-${index}.json`);
+    const themeJsonFilename = themeDescriptor.outputFilename ?? `${themeBaseName}-${index}`;
+    const dest = path.resolve(absOutDir, `${toDirectoryName(themeJsonFilename)}.json`);
 
     try {
       await compileThemeToJson({src, dest, themeDescriptor});

@@ -16,6 +16,13 @@ export interface ThemeDescriptor {
   path: string;
 
   /**
+   * Optional filename to use for the compiled theme JSON file.
+   *
+   * Default: <theme base name>-<index in themes config array>
+   */
+  outputFilename?: string;
+
+  /**
    * Controls the base colors used. Most themes will manually override many of
    * these.
    */
