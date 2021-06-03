@@ -9,18 +9,26 @@ import importUnique from '@darkobits/import-unique';
 import fs from 'fs-extra';
 import traverse from 'traverse';
 
-import {CLIHandlerOptions, ThemeDescriptor} from 'etc/types';
+import { DEFAULT_OUT_DIR } from 'etc/constants';
+import { CLIHandlerOptions, ThemeDescriptor } from 'etc/types';
 import log from 'lib/log';
+import { ThemeDefinition } from 'lib/theme';
 import {
-  parsePackageName,
+  computeExtensionName,
+  computeExtensionDisplayName,
+  computeExtensionAuthor,
   toDirectoryName
-} from 'lib/misc';
+} from 'lib/utils';
 
 
 /**
- * Provided a path to a theme module, loads and validates the module.
+ * @private
+ *
+ * Provided a path to a JavaScript file:
+ * - Loads  whose default export is an instance of
+ * ThemeDefinition, loads and
  */
-export async function loadThemeFromModule(absModulePath: string): Promise<any> {
+async function loadThemeFromModule(absModulePath: string): Promise<ThemeDefinition> {
   await fs.access(absModulePath);
 
   // Load/parse the indicated theme file.
@@ -49,29 +57,26 @@ export async function loadThemeFromModule(absModulePath: string): Promise<any> {
 /**
  * Shape of the options object expected by compileThemeToJson.
  */
-export interface CompileThemeToJsonOptions {
+interface CompileThemeToJsonOptions {
   /**
    * Absolute path to the theme module to compile.
    */
   src: string;
 
   /**
-   * Absolute path to where the compiled theme should be written.
+   * Absolute path to where the compiled theme JSON should be written.
    */
   dest: string;
-
-  /**
-   * Theme descriptor object from the user's VSCT configuration file.
-   */
-  themeDescriptor: ThemeDescriptor;
 }
 
 
 /**
+ * @private
+ *
  * Responsible for rendering a single theme to the host package's configured
  * theme output directory.
  */
-async function compileThemeToJson({themeDescriptor, src, dest}: CompileThemeToJsonOptions) {
+async function compileThemeToJson({ src, dest }: CompileThemeToJsonOptions) {
   try {
     // Ensure we can read from the theme module.
     await fs.access(src);
@@ -79,21 +84,28 @@ async function compileThemeToJson({themeDescriptor, src, dest}: CompileThemeToJs
     // Ensure the destination directory exists.
     await fs.ensureDir(path.dirname(dest));
 
-    log.verbose(log.prefix('compile'), 'Loading & compiling theme.');
-
+    // Load / parse theme module.
     const theme = await loadThemeFromModule(src);
 
-    log.verbose(log.prefix('compile'), `Loaded theme ${log.chalk.blueBright(themeDescriptor.label)} from ${log.chalk.green(src)}.`);
+    // Ensure theme has a label.
+    if (!theme.label) {
+      throw new Error(`Theme at ${log.chalk.green(src)} does not have required property "label". Use .set('label', ...) to set it.`);
+    }
+
+    log.info(log.prefix('compile'), `—— Compiling theme: ${log.chalk.blue(theme.label)}`);
+    log.info(log.prefix('compile'), `—— Entrypoint: ${log.chalk.green(src)}`);
 
     // Write theme JSON.
-    await fs.writeJson(dest, theme, {spaces: 2});
+    await fs.writeJson(dest, theme, { spaces: 2 });
 
-    log.info(log.prefix('compile'), `Wrote theme ${log.chalk.blueBright(themeDescriptor.label)} to ${log.chalk.green(dest)}.`);
+    log.info(log.prefix('compile'), `—— Target: ${log.chalk.green(dest)}.`);
+
+    return theme;
   } catch (err) {
     if (err.message.match(/ENOENT/g)) {
-      log.error(log.prefix('compile'), `Theme ${log.chalk.blueBright(themeDescriptor.label)} does not exist; skipping compilation.`);
-      log.error(log.prefix('compile'), `↳ Attempted to load theme from: ${log.chalk.green(src)}`);
-      return;
+      log.error(log.prefix('compile'), `Theme at ${log.chalk.green(src)} does not exist; skipping compilation.`);
+      log.error(log.prefix('compile'), ` Attempted to load theme from: ${log.chalk.green(src)}`);
+      // return;
     }
 
     throw err;
@@ -102,15 +114,21 @@ async function compileThemeToJson({themeDescriptor, src, dest}: CompileThemeToJs
 
 
 /**
- * Responsible re-compiling each theme defined in the user's configuration file.
+ * Responsible for compiling each theme defined in the user's configuration
+ * file.
  */
-export default async function compile({config, root, json}: CLIHandlerOptions) {
+export default async function compile({ config, root, json }: CLIHandlerOptions) {
+  const runTime = log.createTimer();
+
   // Compute the absolute path to the directory we will write compiled themes
   // to.
-  const absOutDir = path.resolve(root, config.outDir);
+  const absOutDir = path.resolve(root, config.outDir ?? DEFAULT_OUT_DIR);
 
-  // Compute the base name to use for for themes.
-  const {name: themeBaseName, scope} = parsePackageName(json.name);
+  // Compute name and display name.
+  const extensionName = computeExtensionName({ config, json });
+  const extensionDisplayName = computeExtensionDisplayName({ config, json });
+
+  log.info(log.prefix('compile'), `Compiling extension: ${log.chalk.bold(extensionDisplayName)}`);
 
 
   // ----- [1] Prepare Output Directory ----------------------------------------
@@ -119,23 +137,22 @@ export default async function compile({config, root, json}: CLIHandlerOptions) {
   await fs.remove(absOutDir);
   await fs.ensureDir(absOutDir);
 
-  log.verbose(log.prefix('compile'), `Themes will be compiled to ${log.chalk.green(absOutDir)}.`);
+  log.info(log.prefix('compile'), `Output: ${log.chalk.green(absOutDir)}`);
 
 
   // ----- [2] Prepare Manifest ------------------------------------------------
 
-  log.verbose(log.prefix('compile'), 'Writing theme manifest.');
-
   // Compute the absolute path to the manifest we will create for the theme.
   const absManifestOutPath = path.resolve(absOutDir, 'package.json');
 
-  // Build theme manifest.
+  // Build extension manifest.
   const manifest: any = {
-    name: themeBaseName,
-    displayName: json.displayName,
+    name: extensionName,
+    displayName: extensionDisplayName,
     version: json.version,
     description: json.description,
-    publisher: json.author?.name ?? scope,
+    publisher: computeExtensionAuthor({ json }),
+    keywords: json.keywords,
     repository: json.repository,
     categories: json.categories || ['Themes'],
     contributes: {
@@ -143,6 +160,7 @@ export default async function compile({config, root, json}: CLIHandlerOptions) {
     }
   };
 
+  // Copy the "engines.vscode" value from package.json to the theme's manifest.
   if (json.engines?.vscode) {
     manifest.engines = {
       vscode: json.engines.vscode
@@ -155,17 +173,19 @@ export default async function compile({config, root, json}: CLIHandlerOptions) {
   let compilationHasErrors = false;
 
   await Promise.all(config.themes.map(async (themeDescriptor, index) => {
-    const src = path.resolve(root, themeDescriptor.path);
-    const themeJsonFilename = themeDescriptor.outputFilename ?? `${themeBaseName}-${index}`;
+    const themeJsonFilename = `${extensionName}-${index}`;
     const dest = path.resolve(absOutDir, `${toDirectoryName(themeJsonFilename)}.json`);
 
     try {
-      await compileThemeToJson({src, dest, themeDescriptor});
+      const theme = await compileThemeToJson({
+        src: path.resolve(root, themeDescriptor.path),
+        dest
+      });
 
       manifest.contributes.themes.push({
-        label: themeDescriptor.label,
+        label: theme.label,
         path: path.relative(absOutDir, dest),
-        uiTheme: themeDescriptor.uiTheme ?? 'vs-dark'
+        uiTheme: theme.uiTheme
       });
     } catch (err) {
       log.error(log.prefix('compile'), err.stack);
@@ -197,4 +217,11 @@ export default async function compile({config, root, json}: CLIHandlerOptions) {
   // ----- [5] Write Manifest --------------------------------------------------
 
   await fs.writeJson(absManifestOutPath, manifest, {spaces: 2});
+  log.info(log.prefix('compile'), `Wrote manifest to: ${log.chalk.green(absManifestOutPath)}`);
+
+
+  const numThemes = manifest.contributes.themes.length;
+  log.info(log.prefix('compile'),
+    `Compiled ${log.chalk.bold(numThemes)} ${numThemes === 1 ? 'theme' : 'themes'} in ${log.chalk.yellow(runTime)}.`
+  );
 }

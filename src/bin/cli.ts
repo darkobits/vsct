@@ -2,22 +2,25 @@
 
 import path from 'path';
 
-import cli, {SaffronHandler} from '@darkobits/saffron';
+import cli, { SaffronHandler } from '@darkobits/saffron';
 import readPkgUp from 'read-pkg-up';
 
-import {VSCTConfiguration} from 'etc/types';
+import { CLIHandlerOptions, VSCTConfiguration } from 'etc/types';
 import compile from 'lib/compile';
 import install from 'lib/install';
 import start from 'lib/start';
 import log from 'lib/log';
 
 
+export type CLIHandlerFn = (opts: CLIHandlerOptions) => void | Promise<void>;
+
+
 /**
  * Wraps command functions to provide common logic for loading configuration
  * files and the host package's package.json.
  */
-function commonHandler(handlerFn: any) {
-  return async ({argv, config, configPath}: Parameters<SaffronHandler<any, VSCTConfiguration>>[0]) => {
+function commonHandler(handlerFn: CLIHandlerFn) {
+  return async ({ argv, config, configPath }: Parameters<SaffronHandler<any, VSCTConfiguration>>[0]) => {
     try {
       if (!config || !configPath) {
         throw new Error('No configuration file found. Create a vsct.config.js file in your project directory.');

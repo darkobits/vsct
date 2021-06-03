@@ -2,35 +2,19 @@
  * ===== Install ===============================================================
  *
  * This module is the handler for the "vsct install" command, which should be
- * part of a consumer's "postinstall" NPM script. It is also run by the "vsct
- * start" command to symlink theme directories.
+ * part of a host package's "postinstall" NPM script. It is also run by the
+ * "vsct start" command to symlink theme directories.
  */
 import path from 'path';
 import fs from 'fs-extra';
-import { NormalizedPackageJson } from 'read-pkg-up';
 
-import { EXTENSIONS_DIR } from 'etc/constants';
+import { DEFAULT_OUT_DIR, EXTENSIONS_DIR } from 'etc/constants';
 import { CLIHandlerOptions } from 'etc/types';
 import log from 'lib/log';
-import { toDirectoryName, parsePackageName } from 'lib/misc';
-
-
-/**
- * Provided a theme's package.json, returns the directory name that should be
- * used when creating symlinks in the VS Code extensions folder. Directories in
- * the VS Code extensions folder should follow the pattern:
- * "<author name>.<extension name>".
- */
-export function generateVsCodeThemeDirectoryName(packageJson: NormalizedPackageJson, customName = ''): string {
-  if (customName) {
-    return toDirectoryName(customName);
-  }
-
-  const parsedName = parsePackageName(packageJson.name);
-  const finalAuthor = toDirectoryName(packageJson.author?.name ?? parsedName.scope);
-  const finalName = toDirectoryName(parsedName.name);
-  return [finalAuthor, finalName].filter(Boolean).join('.');
-}
+import {
+  // computeExtensionDisplayName,
+  generateVsCodeThemeDirectoryName
+} from 'lib/utils';
 
 
 /**
@@ -38,45 +22,71 @@ export function generateVsCodeThemeDirectoryName(packageJson: NormalizedPackageJ
  * symbolic link from the VS Code theme directory to the theme's local
  * directory. This assumes that "vsct compile" has been run first.
  */
-export default async function install({args, root, config, json}: CLIHandlerOptions) {
-  // Compute the absolute path to the host package's theme output directory.
-  const absThemesSrcDir = path.resolve(root, config.outDir);
+export default async function install({ /* args, */ root, config, json }: CLIHandlerOptions) {
+  const runTime = log.createTimer();
 
-  if (!config.themes || config.themes.length === 0) {
-    log.warn(log.prefix('install'), 'Configuration file did not define any themes.');
-    return;
+
+  // ----- [1] Compute Paths ---------------------------------------------------
+
+  // Compute the absolute path to the host package's theme output directory,
+  // which will be the "source" directory from which we
+  const absCompiledExtDir = path.resolve(root, config.outDir ?? DEFAULT_OUT_DIR);
+
+  // Compute the absolute path to the symlink we will create in the VS Code
+  // themes folder.
+  const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName({ config, json }));
+
+
+  // ----- [2] Gather Metadata -------------------------------------------------
+
+  // Load the theme's manifest, a package.json nested in the output directory.
+  const manifest = await fs.readJSON(path.join(absCompiledExtDir, 'package.json'));
+
+  if (!manifest?.displayName || !manifest?.name) {
+    throw new Error('Manifest did not contain a "name" or "displayName".');
   }
 
-  return Promise.all(config.themes.map(async themeDescriptor => {
-    // Compute the absolute path to the theme's source folder.
-    const absThemeSrcDir = path.resolve(absThemesSrcDir);
+  if (!manifest?.contributes?.themes?.length) {
+    throw new Error('Manifest did not contain any themes.');
+  }
 
-    // Compute the absolute path to the symlink we will create in the VS Code
-    // themes folder.
-    const absSymlinkPath = path.join(EXTENSIONS_DIR, generateVsCodeThemeDirectoryName(json, config.installDir));
 
-    // Determine if a symlink already exists.
-    const symlinkExists = await fs.pathExists(absSymlinkPath);
+  // ----- [3] Compute Symlink Strategy ----------------------------------------
 
-    if (symlinkExists) {
-      const linkTarget = await fs.realpath(absSymlinkPath);
+  // Determine if a symlink already exists.
+  const symlinkExists = await fs.pathExists(absSymlinkPath);
 
-      if (linkTarget === absThemeSrcDir) {
-        // This flag is only used internally by the "start" command to suppress
-        // this notification on re-compilations.
-        if (!args.silent) {
-          log.info(log.prefix('install'), `Theme ${log.chalk.blue(themeDescriptor.label)} already installed; skipping.`);
-        }
+  // NOTE: Temporarily experimenting with always un-linking and re-linking.
+  if (symlinkExists) {
+    // const linkTarget = await fs.realpath(absSymlinkPath);
 
-        return;
-      }
+    // if (linkTarget === absCompiledThemesDir) {
+    //   // This flag is only used internally by the "start" command to suppress
+    //   // this notification on re-compilations.
+    //   if (!args.silent) {
+    //     log.info(log.prefix('install'), `Theme ${log.chalk.blue(themeName)}
+    //     already installed; skipping.`);
+    //   }
 
-      // If the link exists but points to another target, remove it.
-      await fs.unlink(absSymlinkPath);
-    }
+    //   return;
+    // }
 
-    await fs.ensureSymlink(absThemeSrcDir, absSymlinkPath);
-    log.verbose(log.prefix('install'), `Symlinked ${log.chalk.green(absSymlinkPath)} => ${log.chalk.green(absThemeSrcDir)}.`);
-    log.info(log.prefix('install'), `Theme ${log.chalk.blue(themeDescriptor.label)} installed.`);
-  }));
+    await fs.unlink(absSymlinkPath);
+  }
+
+  await fs.ensureSymlink(absCompiledExtDir, absSymlinkPath);
+
+
+  // ----- [4] Print Results ---------------------------------------------------
+
+  const extDisplayName = manifest.displayName;
+
+  log.info(log.prefix('install'), `Installing extension: ${log.chalk.bold(extDisplayName)}`);
+  log.verbose(log.prefix('install'), `Symlinked ${log.chalk.green(absSymlinkPath)} => ${log.chalk.green(absCompiledExtDir)}.`);
+
+  manifest?.contributes?.themes?.forEach((entry: any) => {
+    log.info(log.prefix('install'), `—— Installing theme: ${log.chalk.blue(entry.label)}`);
+  });
+
+  log.info(log.prefix('install'), `Installed ${log.chalk.yellow(manifest.contributes.themes.length)} ${manifest.contributes.themes.length === 1 ? 'theme' : 'themes'} in ${log.chalk.yellow(runTime)}.`);
 }

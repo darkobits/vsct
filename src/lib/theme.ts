@@ -2,7 +2,7 @@ import dotProp from 'dot-prop';
 import * as R from 'ramda';
 
 import Color from 'lib/color';
-import {merge} from 'lib/misc';
+import { merge } from 'lib/utils';
 
 
 /**
@@ -55,6 +55,8 @@ export interface ColorSettings {
  */
 export interface ThemeDefinition {
   [key: string]: any;
+  label: string;
+  uiTheme: 'vs-light' | 'vs-dark';
   tokenColors: Array<TransformedGrammarDescriptor>;
   colors: ColorSettings;
 }
@@ -124,6 +126,8 @@ export type ThemeGenerationCallback = (themeGenerator: ThemeGenerator) => void;
  */
 export default function ThemeFactory(themeGeneratorFn: ThemeGenerationCallback): ThemeDefinition {
   const theme: ThemeDefinition = {
+    label: '',
+    uiTheme: 'vs-dark',
     tokenColors: [],
     colors: {}
   };

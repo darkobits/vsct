@@ -2,6 +2,7 @@
   "extends": "@darkobits/ts/tsconfig.json",
   "compilerOptions": {
     "baseUrl": "src",
+    "rootDir": "src",
     "outDir": "dist"
   }
 }

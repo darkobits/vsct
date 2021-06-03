@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import {Arguments} from 'yargs';
-import {toDirectoryName} from 'lib/misc';
+import {toDirectoryName} from 'lib/utils';
 import compile from './compile';
 
 
@@ -19,10 +19,16 @@ jest.mock('fs-extra', () => {
 });
 
 jest.mock('@darkobits/import-unique', () => {
-  return () => {
-    return {
-      __THEME_MODULE__: {}
-    };
+  return (path: string) => {
+    // Return a theme module mock.
+    if (path.includes('__THEME_MODULE__')) {
+      return {
+        label: 'Theme Module',
+        '__THEME_MODULE__': true
+      };
+    }
+
+    throw new Error(`Mock for @darkobits/import-unique has no handler for path: ${path}`);
   };
 });
 
@@ -37,10 +43,10 @@ describe('compile', () => {
 
   it('should compile each theme in the provided configuration object', async () => {
     const config = {
+      displayName: THEME_NAME,
       outDir: OUT_DIR,
       themes: [
         {
-          label: 'FooBLUE Theme',
           path: THEME_PATH
         }
       ]
@@ -69,8 +75,8 @@ describe('compile', () => {
     expect(fs.writeJson.mock.calls[0][0]).toEqual(path.join(ROOT_DIR, OUT_DIR, `${toDirectoryName(THEME_NAME)}-0.json`));
 
     // @ts-ignore
-    expect(fs.writeJson.mock.calls[0][1]).toEqual({
-      __THEME_MODULE__: {}
+    expect(fs.writeJson.mock.calls[0][1]).toMatchObject({
+      __THEME_MODULE__: true
     });
   });
 });

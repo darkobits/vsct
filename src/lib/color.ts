@@ -12,6 +12,8 @@ import Color from 'color';
 
 
 /**
+ * @private
+ *
  * Converts a number into its hexadecimal representation with zero padding.
  */
 function rgbToHex(value: number): string {

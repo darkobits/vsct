@@ -14,7 +14,7 @@ import {CLIHandlerOptions} from 'etc/types';
 import compile from 'lib/compile';
 import install from 'lib/install';
 import log from 'lib/log';
-import {clearRequireCache, uniq} from 'lib/misc';
+import { clearRequireCache } from 'lib/utils';
 
 
 /**
@@ -47,7 +47,9 @@ async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, d
 export default function start({args, config, root, json}: CLIHandlerOptions) {
   // Get a unique list of absolute paths resolved from the "main" entry in each
   // theme descriptor object in the user's VSCT configuration file.
-  const absThemeDirs = uniq(config.themes.map(themeDescriptor => path.parse(path.resolve(root, themeDescriptor.path)).dir));
+  const absThemeDirs = [...new Set(config.themes.map(themeDescriptor => {
+    return path.parse(path.resolve(root, themeDescriptor.path)).dir;
+  }))];
 
   // Create a watcher that watches each of the above directories.
   const watcher = chokidar.watch(absThemeDirs, {
