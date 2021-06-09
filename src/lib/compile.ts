@@ -155,6 +155,9 @@ export default async function compile({ config, root, json }: CLIHandlerOptions)
     keywords: json.keywords,
     repository: json.repository,
     categories: json.categories || ['Themes'],
+    scripts: {
+      postinstall: './install.js'
+    },
     contributes: {
       themes: [] as Array<ThemeDescriptor>
     }
@@ -214,7 +217,13 @@ export default async function compile({ config, root, json }: CLIHandlerOptions)
   }));
 
 
-  // ----- [5] Write Manifest --------------------------------------------------
+  // ----- [5] Copy Install Script ---------------------------------------------
+
+  const installScriptPath = require.resolve('etc/install.js');
+  await fs.copyFile(installScriptPath, path.join(absOutDir, 'install.js'));
+
+
+  // ----- [6] Write Manifest --------------------------------------------------
 
   await fs.writeJson(absManifestOutPath, manifest, {spaces: 2});
   log.info(log.prefix('compile'), `Wrote manifest to: ${log.chalk.green(absManifestOutPath)}`);

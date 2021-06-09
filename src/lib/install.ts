@@ -50,11 +50,11 @@ export default async function install({ /* args, */ root, config, json }: CLIHan
     throw new Error('Manifest did not contain any themes.');
   }
 
-
   // ----- [3] Compute Symlink Strategy ----------------------------------------
 
   // Determine if a symlink already exists.
   const symlinkExists = await fs.pathExists(absSymlinkPath);
+
 
   // NOTE: Temporarily experimenting with always un-linking and re-linking.
   if (symlinkExists) {
