@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/darkobits/vsct/compare/v0.8.0...v0.9.0) (2021-06-10)
+
+
+### ✨ Features
+
+* Install command executes compiled installer. ([2caa9aa](https://github.com/darkobits/vsct/commit/2caa9aa16564f6f3b314e51f18193207fc922e42))
+
 ## [0.8.0](https://github.com/darkobits/vsct/compare/v0.7.0...v0.8.0) (2021-06-09)
 
 
