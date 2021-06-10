@@ -1,4 +1,8 @@
 module.exports = require('@darkobits/ts').jest({
+  coveragePathIgnorePatterns: [
+    'src/bin',
+    'src/etc'
+  ],
   coverageThreshold: {
     global: {
       statements: 35,

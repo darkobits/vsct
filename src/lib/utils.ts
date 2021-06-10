@@ -121,17 +121,3 @@ export function computeExtensionAuthor({ json }: Pick<CLIHandlerOptions, 'json'>
 
   throw new Error('Unable to determine theme\'s author.');
 }
-
-
-/**
- * Provided a theme's package.json, returns the directory name that should be
- * used when creating symlinks in the VS Code extensions folder. Directories in
- * the VS Code extensions folder should follow the pattern:
- * "<author name>.<extension name>".
- */
-export function generateVsCodeThemeDirectoryName({ config, json }: Pick<CLIHandlerOptions, 'config' | 'json'>) {
-  return toDirectoryName([
-    computeExtensionAuthor({ json }),
-    computeExtensionName({ config, json })
-  ].filter(Boolean).join('.'));
-}

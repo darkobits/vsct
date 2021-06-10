@@ -219,7 +219,7 @@ export default async function compile({ config, root, json }: CLIHandlerOptions)
 
   // ----- [5] Copy Install Script ---------------------------------------------
 
-  const installScriptPath = require.resolve('etc/install.js');
+  const installScriptPath = require.resolve('etc/install');
   await fs.copyFile(installScriptPath, path.join(absOutDir, 'install.js'));
 
 
