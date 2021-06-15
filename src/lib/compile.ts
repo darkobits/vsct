@@ -10,7 +10,10 @@ import fs from 'fs-extra';
 import traverse from 'traverse';
 
 import { DEFAULT_OUT_DIR } from 'etc/constants';
-import { CLIHandlerOptions, ThemeDescriptor } from 'etc/types';
+import {
+  CLIHandlerOptions,
+  ThemeDescriptor
+} from 'etc/types';
 import log from 'lib/log';
 import { ThemeDefinition } from 'lib/theme';
 import {
@@ -67,6 +70,11 @@ interface CompileThemeToJsonOptions {
    * Absolute path to where the compiled theme JSON should be written.
    */
   dest: string;
+
+  /**
+   * Theme descriptor for the current theme being compiled.
+   */
+  descriptor: ThemeDescriptor;
 }
 
 
@@ -76,7 +84,7 @@ interface CompileThemeToJsonOptions {
  * Responsible for rendering a single theme to the host package's configured
  * theme output directory.
  */
-async function compileThemeToJson({ src, dest }: CompileThemeToJsonOptions) {
+async function compileThemeToJson({ src, dest, descriptor }: CompileThemeToJsonOptions) {
   try {
     // Ensure we can read from the theme module.
     await fs.access(src);
@@ -87,18 +95,13 @@ async function compileThemeToJson({ src, dest }: CompileThemeToJsonOptions) {
     // Load / parse theme module.
     const theme = await loadThemeFromModule(src);
 
-    // Ensure theme has a label.
-    if (!theme.label) {
-      throw new Error(`Theme at ${log.chalk.green(src)} does not have required property "label". Use .set('label', ...) to set it.`);
-    }
-
-    log.info(log.prefix('compile'), `—— Compiling theme: ${log.chalk.blue(theme.label)}`);
-    log.info(log.prefix('compile'), `—— Entrypoint: ${log.chalk.green(src)}`);
+    log.info(log.prefix('compile'), `Compiling theme: ${log.chalk.blue(descriptor.label)}`);
+    log.verbose(log.prefix('compile'), `Entrypoint: ${log.chalk.green(src)}`);
 
     // Write theme JSON.
     await fs.writeJson(dest, theme, { spaces: 2 });
 
-    log.info(log.prefix('compile'), `—— Target: ${log.chalk.green(dest)}.`);
+    log.verbose(log.prefix('compile'), `Output: ${log.chalk.green(dest)}.`);
 
     return theme;
   } catch (err) {
@@ -137,7 +140,7 @@ export default async function compile({ config, root, json }: CLIHandlerOptions)
   await fs.remove(absOutDir);
   await fs.ensureDir(absOutDir);
 
-  log.info(log.prefix('compile'), `Output: ${log.chalk.green(absOutDir)}`);
+  log.verbose(log.prefix('compile'), `Output: ${log.chalk.green(absOutDir)}`);
 
 
   // ----- [2] Prepare Manifest ------------------------------------------------
@@ -147,11 +150,11 @@ export default async function compile({ config, root, json }: CLIHandlerOptions)
 
   // Build extension manifest.
   const manifest: any = {
-    name: extensionName,
+    name: json.name,
     displayName: extensionDisplayName,
     version: json.version,
     description: json.description,
-    publisher: computeExtensionAuthor({ json }),
+    publisher: computeExtensionAuthor({ config, json }),
     keywords: json.keywords,
     repository: json.repository,
     categories: json.categories || ['Themes'],
@@ -182,11 +185,12 @@ export default async function compile({ config, root, json }: CLIHandlerOptions)
     try {
       const theme = await compileThemeToJson({
         src: path.resolve(root, themeDescriptor.path),
-        dest
+        dest,
+        descriptor: themeDescriptor
       });
 
       manifest.contributes.themes.push({
-        label: theme.label,
+        label: themeDescriptor.label,
         path: path.relative(absOutDir, dest),
         uiTheme: theme.uiTheme
       });
@@ -226,7 +230,7 @@ export default async function compile({ config, root, json }: CLIHandlerOptions)
   // ----- [6] Write Manifest --------------------------------------------------
 
   await fs.writeJson(absManifestOutPath, manifest, {spaces: 2});
-  log.info(log.prefix('compile'), `Wrote manifest to: ${log.chalk.green(absManifestOutPath)}`);
+  log.verbose(log.prefix('compile'), `Wrote extension manifest to: ${log.chalk.green(absManifestOutPath)}`);
 
 
   const numThemes = manifest.contributes.themes.length;

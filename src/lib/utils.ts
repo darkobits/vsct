@@ -1,5 +1,16 @@
-import { CLIHandlerOptions } from 'etc/types';
+import { NormalizedPackageJson } from 'read-pkg-up';
+
+import { VSCTConfiguration } from 'etc/types';
 import log from 'lib/log';
+
+
+/**
+ * Common options object accepted by several utility functions.
+ */
+interface CommonOptions {
+  config: VSCTConfiguration;
+  json: NormalizedPackageJson;
+}
 
 
 /**
@@ -36,17 +47,19 @@ export function merge<O extends {[index: string]: any}>(a: O, b: O, throwOnDupli
 
 
 /**
+ * @private
+ *
  * Provided a valid NPM package name, returns an object containing its scope and
  * name parts.
  */
-export function parsePackageName(fullName: string) {
+function parsePackageName(fullName: string) {
   const match = /^(?:@(?<scope>.*)\/)?(?<name>.*)$/g.exec(fullName);
 
   if (!match) {
     throw new Error(`Unable to parse package name: "${fullName}".`);
   }
 
-  const {groups} = match;
+  const { groups } = match;
 
   if (!groups) {
     throw new Error(`Unable to parse package name: "${fullName}".`);
@@ -63,7 +76,7 @@ export function parsePackageName(fullName: string) {
  * Determines the string to use as the theme's name by inspecting the host
  * package's VSCT configuration and its package.json.
  */
-export function computeExtensionName({ config, json }: Pick<CLIHandlerOptions, 'config' | 'json'>) {
+export function computeExtensionName({ config, json }: CommonOptions) {
   if (config.name) {
     return config?.name;
   }
@@ -80,7 +93,7 @@ export function computeExtensionName({ config, json }: Pick<CLIHandlerOptions, '
  * Determines the string to use as the theme's display name by inspecting the
  * host package's VSCT configuration and its package.json.
  */
-export function computeExtensionDisplayName({ config, json }: Pick<CLIHandlerOptions, 'config' | 'json'>) {
+export function computeExtensionDisplayName({ config, json }: CommonOptions) {
   if (config.displayName) {
     return config.displayName;
   }
@@ -107,7 +120,7 @@ export function computeExtensionDisplayName({ config, json }: Pick<CLIHandlerOpt
  * path in package.json. If this is not set, the scope from the "name" field
  * will be used instead.
  */
-export function computeExtensionAuthor({ json }: Pick<CLIHandlerOptions, 'json'>) {
+export function computeExtensionAuthor({ json }: CommonOptions) {
   if (json.author?.name) {
     return json.author.name;
   }

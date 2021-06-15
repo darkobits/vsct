@@ -55,8 +55,6 @@ export interface ColorSettings {
  */
 export interface ThemeDefinition {
   [key: string]: any;
-  label: string;
-  uiTheme: 'vs-light' | 'vs-dark';
   tokenColors: Array<TransformedGrammarDescriptor>;
   colors: ColorSettings;
 }

@@ -5,7 +5,11 @@ import path from 'path';
 import cli, { SaffronHandler } from '@darkobits/saffron';
 import readPkgUp from 'read-pkg-up';
 
-import { CLIHandlerOptions, VSCTConfiguration } from 'etc/types';
+import {
+  CLIHandlerOptions,
+  VSCTConfiguration,
+  VSCTConfigurationFactory
+} from 'etc/types';
 import compile from 'lib/compile';
 import install from 'lib/install';
 import start from 'lib/start';
@@ -20,7 +24,7 @@ export type CLIHandlerFn = (opts: CLIHandlerOptions) => void | Promise<void>;
  * files and the host package's package.json.
  */
 function commonHandler(handlerFn: CLIHandlerFn) {
-  return async ({ argv, config, configPath }: Parameters<SaffronHandler<any, VSCTConfiguration>>[0]) => {
+  return async ({ argv, config, configPath }: Parameters<SaffronHandler<any, VSCTConfiguration | VSCTConfigurationFactory>>[0]) => {
     try {
       if (!config || !configPath) {
         throw new Error('No configuration file found. Create a vsct.config.js file in your project directory.');
@@ -32,11 +36,15 @@ function commonHandler(handlerFn: CLIHandlerFn) {
         throw new Error('Unable to load the project\'s package.json.');
       }
 
+      const computedConfig = typeof config === 'function' ? config({
+        json: packageInfo?.packageJson
+      }) : config;
+
       const root = path.dirname(configPath);
 
       await handlerFn({
         args: argv,
-        config,
+        config: computedConfig,
         root,
         json: packageInfo.packageJson
       });
@@ -50,7 +58,7 @@ function commonHandler(handlerFn: CLIHandlerFn) {
 
 // ----- Command: Compile ------------------------------------------------------
 
-cli.command<any, VSCTConfiguration>({
+cli.command<any, VSCTConfiguration | VSCTConfigurationFactory>({
   command: 'compile',
   config: {
     auto: false
@@ -62,7 +70,7 @@ cli.command<any, VSCTConfiguration>({
 
 // ----- Command: Install ------------------------------------------------------
 
-cli.command<any, VSCTConfiguration>({
+cli.command<any, VSCTConfiguration | VSCTConfigurationFactory>({
   command: 'install',
   config: {
     auto: false
@@ -74,7 +82,7 @@ cli.command<any, VSCTConfiguration>({
 
 // ----- Command: Start --------------------------------------------------------
 
-cli.command<any, VSCTConfiguration>({
+cli.command<any, VSCTConfiguration | VSCTConfigurationFactory>({
   command: 'start',
   config: {
     auto: false

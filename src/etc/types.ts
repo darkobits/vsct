@@ -1,6 +1,9 @@
 import { NormalizedPackageJson } from 'read-pkg-up';
 
 
+export type StringConfigGenerator = (opts: { config: VSCTConfiguration, json: NormalizedPackageJson }) => string;
+
+
 /**
  * An object describing an individual theme in a VSCT configuration file.
  */
@@ -9,6 +12,16 @@ export interface ThemeDescriptor {
    * Path (relative to the theme manifest) to the theme file.
    */
   path: string;
+
+  /**
+   * Label to use for the theme. Appears in the theme selector drop-down.
+   */
+  label: string | StringConfigGenerator;
+
+  /**
+   * Base color set for the theme.
+   */
+  uiTheme: 'vs-light' | 'vs-dark';
 }
 
 
@@ -45,6 +58,14 @@ export interface VSCTConfiguration {
    */
   themes: Array<ThemeDescriptor>;
 }
+
+
+/**
+ * Optional configuration factory that may be used in a VSCT configuration file.
+ */
+export type VSCTConfigurationFactory = (opts: {
+  json: NormalizedPackageJson;
+}) => VSCTConfiguration;
 
 
 /**
