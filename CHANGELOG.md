@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.11.1](https://github.com/darkobits/vsct/compare/v0.11.0...v0.11.1) (2021-06-15)
+
+
+### 🐞 Bug Fixes
+
+* Start command passes isDev to config factories. ([65f64ae](https://github.com/darkobits/vsct/commit/65f64ae115edd71114e5b42f53ac74ca96e03cea))
+
 ## [0.11.0](https://github.com/darkobits/vsct/compare/v0.10.0...v0.11.0) (2021-06-15)
 
 
