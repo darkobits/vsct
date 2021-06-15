@@ -62,6 +62,7 @@ export interface VSCTConfiguration {
  */
 export type VSCTConfigurationFactory = (opts: {
   json: NormalizedPackageJson;
+  isDev: boolean;
 }) => VSCTConfiguration;
 
 

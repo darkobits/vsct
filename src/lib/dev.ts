@@ -1,9 +1,9 @@
 /**
- * ===== Install ===============================================================
+ * ===== Dev ===================================================================
  *
- * This module is the handler for the "vsct install" command. It executes a
- * compiled extension's installer to create a symlink from the VS Code
- * extensions directory to the directory from which the installer resides.
+ * This module is the handler for the "vsct dev" command. It executes a compiled
+ * extension's installer script to create a symlink from the VS Code extensions
+ * directory to the directory from which the extension resides.
  */
 import path from 'path';
 
@@ -50,15 +50,22 @@ export default async function install({ /* args, */ root, config }: CLIHandlerOp
 
   const command = execa(installScriptPath, {
     cwd: absCompiledExtDir,
-    stdout: 'pipe'
+    stdio: 'pipe',
+    env: {
+      VSCT_DEV: 'true'
+    }
   });
 
   command.stdout?.pipe(new LogPipe((line: string) => {
     if (lastLine !== line) {
-      log.info(log.prefix('install'), line);
+      log.info(log.prefix('dev'), line);
     }
 
     lastLine = line;
+  }));
+
+  command.stderr?.pipe(new LogPipe((line: string) => {
+    log.error(log.prefix('dev'), line);
   }));
 
   await command;

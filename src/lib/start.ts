@@ -12,7 +12,7 @@ import chokidar from 'chokidar';
 
 import {CLIHandlerOptions} from 'etc/types';
 import compile from 'lib/compile';
-import install from 'lib/install';
+import dev from 'lib/dev';
 import log from 'lib/log';
 import { clearRequireCache } from 'lib/utils';
 
@@ -77,7 +77,7 @@ export default function start({args, config, root, json}: CLIHandlerOptions) {
       await compilationReadyPromise;
 
       await compile({args, config, root, json});
-      await install({args: {...args, silent: true}, config, root, json});
+      await dev({args: {...args, silent: true}, config, root, json});
     } catch (err) {
       if (err.message.match(/EEXIST/g)) {
         // Ignore EEXIST errors on install.

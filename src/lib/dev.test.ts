@@ -1,7 +1,7 @@
 import execa, { ExecaChildProcess } from 'execa';
 import path from 'path';
 
-import install from './install';
+import dev from './dev';
 
 
 jest.mock('fs-extra', () => {
@@ -35,11 +35,11 @@ describe('install', () => {
 
   it('should invoke the install script for the compiled extension in the host package', async () => {
     // @ts-expect-error
-    await install({ root, config });
+    await dev({ root, config });
 
     expect(execa).toHaveBeenCalledWith(path.join(root, config.outDir, 'install.js'), {
       cwd: path.join(root, config.outDir),
-      stdout: 'pipe'
+      stdio: 'pipe'
     });
   });
 });

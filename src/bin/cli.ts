@@ -2,7 +2,7 @@
 
 import path from 'path';
 
-import cli, { SaffronHandler } from '@darkobits/saffron';
+import cli, { SaffronHandler, Arguments } from '@darkobits/saffron';
 import readPkgUp from 'read-pkg-up';
 
 import {
@@ -11,7 +11,7 @@ import {
   VSCTConfigurationFactory
 } from 'etc/types';
 import compile from 'lib/compile';
-import install from 'lib/install';
+import dev from 'lib/dev';
 import start from 'lib/start';
 import log from 'lib/log';
 
@@ -24,7 +24,7 @@ export type CLIHandlerFn = (opts: CLIHandlerOptions) => void | Promise<void>;
  * files and the host package's package.json.
  */
 function commonHandler(handlerFn: CLIHandlerFn) {
-  return async ({ argv, config, configPath }: Parameters<SaffronHandler<any, VSCTConfiguration | VSCTConfigurationFactory>>[0]) => {
+  return async ({ argv, config, configPath }: Parameters<SaffronHandler<Arguments, VSCTConfiguration | VSCTConfigurationFactory>>[0]) => {
     try {
       if (!config || !configPath) {
         throw new Error('No configuration file found. Create a vsct.config.js file in your project directory.');
@@ -37,7 +37,10 @@ function commonHandler(handlerFn: CLIHandlerFn) {
       }
 
       const computedConfig = typeof config === 'function' ? config({
-        json: packageInfo?.packageJson
+        json: packageInfo?.packageJson,
+        // If we are using the 'vsct dev' command, pass isDev=true to config
+        // factories.
+        isDev: argv._[0] === 'dev'
       }) : config;
 
       const root = path.dirname(configPath);
@@ -58,7 +61,7 @@ function commonHandler(handlerFn: CLIHandlerFn) {
 
 // ----- Command: Compile ------------------------------------------------------
 
-cli.command<any, VSCTConfiguration | VSCTConfigurationFactory>({
+cli.command<Arguments, VSCTConfiguration | VSCTConfigurationFactory>({
   command: 'compile',
   config: {
     auto: false
@@ -68,21 +71,21 @@ cli.command<any, VSCTConfiguration | VSCTConfigurationFactory>({
 });
 
 
-// ----- Command: Install ------------------------------------------------------
+// ----- Command: Dev ------------------------------------------------------
 
-cli.command<any, VSCTConfiguration | VSCTConfigurationFactory>({
-  command: 'install',
+cli.command<Arguments, VSCTConfiguration | VSCTConfigurationFactory>({
+  command: 'dev',
   config: {
     auto: false
   },
-  description: 'Creates symlinks from VS Code back to rendered themes.',
-  handler: commonHandler(install)
+  description: 'Creates a symlink in the VS Code extensions directory to the local theme.',
+  handler: commonHandler(dev)
 });
 
 
 // ----- Command: Start --------------------------------------------------------
 
-cli.command<any, VSCTConfiguration | VSCTConfigurationFactory>({
+cli.command<Arguments, VSCTConfiguration | VSCTConfigurationFactory>({
   command: 'start',
   config: {
     auto: false
@@ -92,4 +95,14 @@ cli.command<any, VSCTConfiguration | VSCTConfigurationFactory>({
 });
 
 
-cli.init();
+cli.init(yargs => {
+  yargs.strict(true);
+  yargs.showHelpOnFail(true);
+  yargs.check(argv => {
+    if (!argv._[0]) {
+      throw new Error('Error: No command provided.');
+    }
+
+    return true;
+  });
+});

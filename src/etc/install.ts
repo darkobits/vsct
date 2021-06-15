@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 import fs from 'fs';
 import os from 'os';
@@ -42,47 +43,53 @@ function parsePackageName(fullName: string) {
 function install() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const manifest = require('./package.json');
-  const symlinkPath = path.join(os.homedir(), '.vscode', 'extensions');
+
+  // The 'vsct dev' command handler will invoke this script with the VSCT_DEV
+  // environment variable set.
+  const isDev = process.env.VSCT_DEV === 'true';
+  const vsCodeExtensionsDir = path.join(os.homedir(), '.vscode', 'extensions');
   const { name } = parsePackageName(manifest.name);
-  const symlinkName = `${manifest.publisher}.${name}`;
+
+  // If being invoked by 'vsct dev', append "-dev" to the directory name so as
+  // to not overwrite a production version of the same extension.
+  const extensionDirname = `${manifest.publisher}.${name}${isDev ? '-dev' : ''}`;
 
   // 1. Ensure extensions directory exists.
   try {
-    fs.accessSync(symlinkPath, fs.constants.R_OK);
+    fs.accessSync(vsCodeExtensionsDir, fs.constants.R_OK);
   } catch {
-    process.stderr.write('Error: VS Code does not appear to be installed on your system.\n');
+    console.error('Error: VS Code does not appear to be installed on your system.');
     process.exit(1);
   }
 
   // 2. Ensure the extensions directory is writable.
   try {
-    fs.accessSync(symlinkPath, fs.constants.W_OK);
+    fs.accessSync(vsCodeExtensionsDir, fs.constants.W_OK);
   } catch {
-    process.stderr.write('Error: Unable to write to the VS Code extensions directory.\n');
-    process.stderr.write('Administrator permissions may be required.\n');
+    console.error('Error: Unable to write to the VS Code extensions directory.\nAdministrator permissions may be required.');
     process.exit(1);
   }
 
   // 3. Remove existing symlink if one exists.
   try {
-    fs.unlinkSync(path.join(symlinkPath, symlinkName));
+    fs.unlinkSync(path.join(vsCodeExtensionsDir, extensionDirname));
   } catch (err) {
     // Ignore ENOENT errors; there was no symlink to delete.
     if (err.code !== 'ENOENT') {
-      process.stderr.write(`Error: ${err.message}\n`);
+      console.error(`Error: ${err.message}`);
       process.exit(1);
     }
   }
 
   // 4. Symlink from the extensions directory to this script's directory.
   try {
-    fs.symlinkSync(__dirname, path.join(symlinkPath, symlinkName));
+    fs.symlinkSync(__dirname, path.join(vsCodeExtensionsDir, extensionDirname));
   } catch (err) {
-    process.stderr.write(`Error: ${err.message}\n`);
+    console.error(`Error: ${err.message}`);
     process.exit(1);
   }
 
-  process.stdout.write(`Installed extension: ${manifest.displayName}\n`);
+  console.log(`Installed extension: ${manifest.displayName}`);
 }
 
 void install();
