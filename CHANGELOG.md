@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/darkobits/vsct/compare/v0.9.0...v0.10.0) (2021-06-15)
+
+
+### ✨ Features
+
+* Support configuration factory functions. ([e306654](https://github.com/darkobits/vsct/commit/e306654732251fdcaf52b11a5483356d255d0a39))
+
+
+### 🐞 Bug Fixes
+
+* Installer computes extension directory name correctly. ([535bd70](https://github.com/darkobits/vsct/commit/535bd706ab5879cdf7e4f31e1aaf6e1ae05c83ac))
+
 ## [0.9.0](https://github.com/darkobits/vsct/compare/v0.8.0...v0.9.0) (2021-06-10)
 
 
