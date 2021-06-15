@@ -6,6 +6,34 @@ import path from 'path';
 
 
 /**
+ * @private
+ *
+ * Provided a valid NPM package name, returns an object containing its scope and
+ * name parts.
+ *
+ * (Copied from utils.ts)
+ */
+function parsePackageName(fullName: string) {
+  const match = /^(?:@(?<scope>.*)\/)?(?<name>.*)$/g.exec(fullName);
+
+  if (!match) {
+    throw new Error(`Unable to parse package name: "${fullName}".`);
+  }
+
+  const { groups } = match;
+
+  if (!groups) {
+    throw new Error(`Unable to parse package name: "${fullName}".`);
+  }
+
+  return {
+    scope: groups.scope,
+    name: groups.name
+  };
+}
+
+
+/**
  * This script is copied into the output directory of compiled extensions and
  * executed when the extension is installed. It ensures that VS Code is
  * installed and creates a symlink in the VS Code extensions directory back to
@@ -15,7 +43,8 @@ function install() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const manifest = require('./package.json');
   const symlinkPath = path.join(os.homedir(), '.vscode', 'extensions');
-  const symlinkName = `${manifest.publisher}.${manifest.name}`;
+  const { name } = parsePackageName(manifest.name);
+  const symlinkName = `${manifest.publisher}.${name}`;
 
   // 1. Ensure extensions directory exists.
   try {
@@ -53,7 +82,7 @@ function install() {
     process.exit(1);
   }
 
-  process.stdout.write(`Installed extension: ${manifest.displayName} v${manifest.version}.\n`);
+  process.stdout.write(`Installed extension: ${manifest.displayName}\n`);
 }
 
 void install();

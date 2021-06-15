@@ -1,9 +1,6 @@
 import { NormalizedPackageJson } from 'read-pkg-up';
 
 
-export type StringConfigGenerator = (opts: { config: VSCTConfiguration, json: NormalizedPackageJson }) => string;
-
-
 /**
  * An object describing an individual theme in a VSCT configuration file.
  */
@@ -16,7 +13,7 @@ export interface ThemeDescriptor {
   /**
    * Label to use for the theme. Appears in the theme selector drop-down.
    */
-  label: string | StringConfigGenerator;
+  label: string;
 
   /**
    * Base color set for the theme.

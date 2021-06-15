@@ -7,12 +7,16 @@
  */
 import path from 'path';
 
+import LogPipe from '@darkobits/log/dist/lib/log-pipe';
 import execa from 'execa';
 import fs from 'fs-extra';
 
 import { DEFAULT_OUT_DIR } from 'etc/constants';
 import { CLIHandlerOptions } from 'etc/types';
 import log from 'lib/log';
+
+
+let lastLine: string;
 
 
 /**
@@ -44,10 +48,18 @@ export default async function install({ /* args, */ root, config }: CLIHandlerOp
     throw err;
   }
 
-  await execa(installScriptPath, {
+  const command = execa(installScriptPath, {
     cwd: absCompiledExtDir,
-    stdio: 'inherit'
+    stdout: 'pipe'
   });
 
-  log.info(log.prefix('install'), 'Done.');
+  command.stdout?.pipe(new LogPipe((line: string) => {
+    if (lastLine !== line) {
+      log.info(log.prefix('install'), line);
+    }
+
+    lastLine = line;
+  }));
+
+  await command;
 }

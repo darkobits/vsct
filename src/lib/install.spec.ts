@@ -1,4 +1,4 @@
-import execa from 'execa';
+import execa, { ExecaChildProcess } from 'execa';
 import path from 'path';
 
 import install from './install';
@@ -11,7 +11,18 @@ jest.mock('fs-extra', () => {
 });
 
 jest.mock('execa', () => {
-  return jest.fn();
+  const execaMock = jest.fn(() => {
+    const processPromise = Promise.resolve() as unknown as ExecaChildProcess;
+
+    // @ts-expect-error
+    processPromise.stdout = {
+      pipe: jest.fn()
+    };
+
+    return processPromise;
+  });
+
+  return execaMock;
 });
 
 
@@ -28,7 +39,7 @@ describe('install', () => {
 
     expect(execa).toHaveBeenCalledWith(path.join(root, config.outDir, 'install.js'), {
       cwd: path.join(root, config.outDir),
-      stdio: 'inherit'
+      stdout: 'pipe'
     });
   });
 });
