@@ -38,9 +38,9 @@ function commonHandler(handlerFn: CLIHandlerFn) {
 
       const computedConfig = typeof config === 'function' ? config({
         json: packageInfo?.packageJson,
-        // If we are using the 'vsct dev' command, pass isDev=true to config
-        // factories.
-        isDev: argv._[0] === 'dev'
+        // If we are using the "start" or "dev" commands, pass isDev=true to
+        // config factories.
+        isDev: ['dev', 'start'].includes(argv._[0] as string)
       }) : config;
 
       const root = path.dirname(configPath);
