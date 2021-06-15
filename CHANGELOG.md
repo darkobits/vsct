@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.11.0](https://github.com/darkobits/vsct/compare/v0.10.0...v0.11.0) (2021-06-15)
+
+
+### ✨ Features
+
+* Pass isDev to config factories, rename "install" to "dev". ([3fa759b](https://github.com/darkobits/vsct/commit/3fa759b5cd0a1f82ea8888aead2afaac561aac73))
+
+
+### 🏗 Chores
+
+* Update dependencies. ([73e6f2b](https://github.com/darkobits/vsct/commit/73e6f2b998875aa843c5a291caa6517caf8fe193))
+
 ## [0.10.0](https://github.com/darkobits/vsct/compare/v0.9.0...v0.10.0) (2021-06-15)
 
 
