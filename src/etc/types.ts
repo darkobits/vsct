@@ -41,6 +41,12 @@ export interface VSCTConfiguration {
   displayName?: string;
 
   /**
+   * Override VSCT's default package.json inference and provide an explicit
+   * value for the extension's "publisher".
+   */
+  publisher?: string;
+
+  /**
    * Directory relative to the project root to which VSCT will write compiled
    * extension files.
    *

@@ -116,11 +116,16 @@ export function computeExtensionDisplayName({ config, json }: CommonOptions) {
 
 
 /**
- * Computes the extension's author by first trying to use the "author.name"
- * path in package.json. If this is not set, the scope from the "name" field
- * will be used instead.
+ * Computes the extension's "publisher" (equivalent to NPM's "author") by first
+ * trying to use the "name" property in a VSCT configuration file. Then, it will
+ * try the "author.name" path in package.json. If this is not set, the scope
+ * from the "name" field will be used instead.
  */
-export function computeExtensionAuthor({ json }: CommonOptions) {
+export function computeExtensionPublisher({ config, json }: CommonOptions) {
+  if (config.publisher) {
+    return config.publisher;
+  }
+
   if (json.author?.name) {
     return json.author.name;
   }

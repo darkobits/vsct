@@ -20,7 +20,7 @@ import { ThemeDefinition } from 'lib/theme';
 import {
   computeExtensionName,
   computeExtensionDisplayName,
-  computeExtensionAuthor,
+  computeExtensionPublisher,
   toDirectoryName
 } from 'lib/utils';
 
@@ -155,7 +155,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
     displayName: extensionDisplayName,
     version: isDev ? semver.inc(json.version, 'prerelease', 'dev') : json.version,
     description: json.description,
-    publisher: computeExtensionAuthor({ config, json }),
+    publisher: computeExtensionPublisher({ config, json }),
     keywords: json.keywords,
     repository: json.repository,
     categories: json.categories || ['Themes'],
