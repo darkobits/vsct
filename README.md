@@ -262,9 +262,9 @@ a result, `outDir` should be a valid, self-contained VS Code extension.
 
 ### `vsct dev`
 
-This command will create a symbolic symbolic link in the current user's VS Code extensions directory
-that points to the configured `outDir`. Assuming the extension has been compiled, it will be loaded the
-next time VS Code is opened or a VS Code window is reloaded.
+This command will create a symbolic link in the current user's VS Code extensions directory that points
+to the configured `outDir`. Assuming the extension has been compiled, it will be loaded the next time VS
+Code is opened or a VS Code window is reloaded.
 
 ### `vsct start`
 
@@ -276,12 +276,24 @@ then watch `outDir` and continuously re-compile the extension as theme source fi
 > changes, so you'll have to reload windows manually when you make a change in order to see them
 > reflected in the VS Code interface.
 
+## Publishing to NPM
+
+Themes are compiled by VSCT to have zero runtime dependencies and ship with a small installer script to
+create a symbolic link from VS Code's extensions directory to the directory where the NPM package was
+installed. As such, you should not run `npm publish` from the root directory of the project. Rather,
+run `npm publish .vsct-extension` (or whatever your configured `outDir` is) to publish an extension to
+NPM.
+
+To prevent accidental invocations of `npm publish` from the root directory, it is recommended that you
+add `"private": true` to your `package.json`, which will prevent NPM from accidentally publishing your
+entire project.
+
 # Additional Resources
 
 * [VS Code Extension Manifest Spec](https://code.visualstudio.com/api/references/extension-manifest)
 * [VS Code Theme Color Guide](https://code.visualstudio.com/api/references/theme-color)
-* [TextMate Language Grammars](https://macromates.com/manual/en/language_grammars)
 * [VS Code Syntax Highlight Guide](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide)
+* [TextMate Language Grammars](https://macromates.com/manual/en/language_grammars)
 
 <a href="#top">
   <img src="https://user-images.githubusercontent.com/441546/118062198-4ff04e80-b34b-11eb-87f3-406a345d5526.png" style="max-width: 100%;">
