@@ -179,15 +179,16 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
 
   let compilationHasErrors = false;
 
-  await Promise.all(config.themes.map(async (themeDescriptor, index) => {
+  await Promise.all(config.themes.map(async (originalThemeDescriptor, index) => {
     const themeJsonFilename = `${extensionName}-${index}`;
     const dest = path.resolve(absOutDir, `${toDirectoryName(themeJsonFilename)}.json`);
 
-    try {
-      if (isDev) {
-        themeDescriptor.label = `${themeDescriptor.label} (Dev)`;
-      }
+    const themeDescriptor = {
+      ...originalThemeDescriptor,
+      label: `${originalThemeDescriptor.label} (Dev)`
+    };
 
+    try {
       const theme = await compileThemeToJson({
         src: path.resolve(root, themeDescriptor.path),
         dest,
