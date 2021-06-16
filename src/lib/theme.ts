@@ -124,8 +124,6 @@ export type ThemeGenerationCallback = (themeGenerator: ThemeGenerator) => void;
  */
 export default function ThemeFactory(themeGeneratorFn: ThemeGenerationCallback): ThemeDefinition {
   const theme: ThemeDefinition = {
-    label: '',
-    uiTheme: 'vs-dark',
     tokenColors: [],
     colors: {}
   };
