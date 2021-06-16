@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.11.3](https://github.com/darkobits/vsct/compare/v0.11.2...v0.11.3) (2021-06-16)
+
+
+### 🐞 Bug Fixes
+
+* Apply Dev label without mutating original configuration object. ([ac01e63](https://github.com/darkobits/vsct/commit/ac01e63f2f20d8357386bfcc3ab9b21347932435))
+
 ### [0.11.2](https://github.com/darkobits/vsct/compare/v0.11.1...v0.11.2) (2021-06-16)
 
 
