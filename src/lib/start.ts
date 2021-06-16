@@ -76,7 +76,7 @@ export default function start({args, config, root, json}: CLIHandlerOptions) {
       // them.
       await compilationReadyPromise;
 
-      await compile({args, config, root, json});
+      await compile({args, config, root, json, isDev: true});
       await dev({args: {...args, silent: true}, config, root, json});
     } catch (err) {
       if (err.message.match(/EEXIST/g)) {

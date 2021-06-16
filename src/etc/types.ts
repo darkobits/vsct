@@ -89,4 +89,10 @@ export interface CLIHandlerOptions {
    * The host package's parsed package.json.
    */
   json: NormalizedPackageJson;
+
+  /**
+   * Whether or not the handler function is being invoked as part of a
+   * development-related process ("start", "dev").
+   */
+  isDev?: boolean;
 }

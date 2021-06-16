@@ -7,6 +7,7 @@ import path from 'path';
 
 import importUnique from '@darkobits/import-unique';
 import fs from 'fs-extra';
+import semver from 'semver';
 import traverse from 'traverse';
 
 import { DEFAULT_OUT_DIR } from 'etc/constants';
@@ -120,7 +121,7 @@ async function compileThemeToJson({ src, dest, descriptor }: CompileThemeToJsonO
  * Responsible for compiling each theme defined in the user's configuration
  * file.
  */
-export default async function compile({ config, root, json }: CLIHandlerOptions) {
+export default async function compile({ config, root, json, isDev }: CLIHandlerOptions) {
   const runTime = log.createTimer();
 
   // Compute the absolute path to the directory we will write compiled themes
@@ -150,9 +151,9 @@ export default async function compile({ config, root, json }: CLIHandlerOptions)
 
   // Build extension manifest.
   const manifest: any = {
-    name: json.name,
+    name: `${json.name}${isDev ? '-dev' : ''}`,
     displayName: extensionDisplayName,
-    version: json.version,
+    version: isDev ? semver.inc(json.version, 'prerelease', 'dev') : json.version,
     description: json.description,
     publisher: computeExtensionAuthor({ config, json }),
     keywords: json.keywords,
@@ -183,6 +184,10 @@ export default async function compile({ config, root, json }: CLIHandlerOptions)
     const dest = path.resolve(absOutDir, `${toDirectoryName(themeJsonFilename)}.json`);
 
     try {
+      if (isDev) {
+        themeDescriptor.label = `${themeDescriptor.label} (Dev)`;
+      }
+
       const theme = await compileThemeToJson({
         src: path.resolve(root, themeDescriptor.path),
         dest,
