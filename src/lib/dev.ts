@@ -20,9 +20,9 @@ let lastLine: string;
 
 
 /**
- * For each theme in the host package's theme output directory, creates a
- * symbolic link from the VS Code theme directory to the theme's local
- * directory. This assumes that "vsct compile" has been run first.
+ * Creates a symbolic link from the VS Code extensions directory to the local
+ * directory where the compiled extension resides. This assumes that "vsct
+ * compile" has been run first.
  */
 export default async function install({ /* args, */ root, config }: CLIHandlerOptions) {
   const absCompiledExtDir = path.resolve(root, config.outDir ?? DEFAULT_OUT_DIR);

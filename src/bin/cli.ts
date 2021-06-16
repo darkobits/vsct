@@ -6,7 +6,7 @@ import cli, { SaffronHandler, Arguments } from '@darkobits/saffron';
 import readPkgUp from 'read-pkg-up';
 
 import {
-  CLIHandlerOptions,
+  CLIHandlerFn,
   VSCTConfiguration,
   VSCTConfigurationFactory
 } from 'etc/types';
@@ -14,9 +14,6 @@ import compile from 'lib/compile';
 import dev from 'lib/dev';
 import start from 'lib/start';
 import log from 'lib/log';
-
-
-export type CLIHandlerFn = (opts: CLIHandlerOptions) => void | Promise<void>;
 
 
 /**

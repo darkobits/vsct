@@ -100,3 +100,6 @@ export interface CLIHandlerOptions {
    */
   isDev?: boolean;
 }
+
+
+export type CLIHandlerFn = (opts: CLIHandlerOptions) => void | Promise<void>;
