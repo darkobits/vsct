@@ -27,18 +27,16 @@ export interface ThemeDescriptor {
  */
 export interface VSCTConfiguration {
   /**
-   * String used for the "name" field in generated extension manifests. This
-   * string must be unique across all installed themes to ensure proper
-   * behavior. By default, VSCT will infer this value from the project's
-   * package.json.
+   * Override VSCT's default package.json inference and provide an explicit
+   * value for the extension's "name". This is also the name the extension will
+   * publish to on NPM, but will not be shown to users in the VS Code interface.
    */
   name?: string;
 
   /**
-   * String used for the "displayName" field in generated extension manifests.
-   * This string is shown in the Extensions list and in the extensions detail
-   * screen. By default, VSCT will infer this value from the project's
-   * package.json.
+   * Override VSCT's default package.json inference and provide an explicit
+   * value for the extension's "displayName". This is shown in the Extensions
+   * list and in the extensions detail screen.
    */
   displayName?: string;
 

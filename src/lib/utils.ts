@@ -111,7 +111,7 @@ export function computeExtensionDisplayName({ config, json }: CommonOptions) {
     return name;
   }
 
-  throw new Error('Unable to determine theme\'s display name.');
+  throw new Error('Unable to determine theme\'s "displayName".');
 }
 
 
@@ -131,6 +131,5 @@ export function computeExtensionAuthor({ json }: CommonOptions) {
     return scope;
   }
 
-
-  throw new Error('Unable to determine theme\'s author.');
+  throw new Error('Unable to determine theme\'s "publisher".');
 }
