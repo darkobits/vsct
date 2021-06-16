@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.0](https://github.com/darkobits/vsct/compare/v0.11.3...v0.12.0) (2021-06-16)
+
+
+### 📖 Documentation
+
+* Update documentation. ([561a1b5](https://github.com/darkobits/vsct/commit/561a1b50e5da6d9db18f893032aebd38ffffb39b))
+
+
+### ✨ Features
+
+* Add "publisher" to configuration file spec. ([5615c56](https://github.com/darkobits/vsct/commit/5615c56a7eda263e2fd15c00cdccffb8d583db09))
+
 ### [0.11.3](https://github.com/darkobits/vsct/compare/v0.11.2...v0.11.3) (2021-06-16)
 
 
