@@ -38,7 +38,7 @@
     "fs-extra": "^10.0.0",
     "ramda": "^0.27.0",
     "read-pkg-up": "^7.0.1",
-    "semver": "^6.3.0",
+    "semver": "^7.5.2",
     "traverse": "^0.6.6"
   },
   "devDependencies": {
