@@ -160,7 +160,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
     repository: json.repository,
     categories: json.categories || ['Themes'],
     scripts: {
-      postinstall: './install.js'
+      postinstall: 'install.js'
     },
     contributes: {
       themes: [] as Array<ThemeDescriptor>
