@@ -2,7 +2,7 @@
 
 import path from 'path';
 
-import cli, { SaffronHandler, Arguments } from '@darkobits/saffron';
+import * as cli from '@darkobits/saffron';
 import { readPackageUp } from 'read-pkg-up';
 
 import {
@@ -14,6 +14,8 @@ import compile from 'lib/compile';
 import dev from 'lib/dev';
 import log from 'lib/log';
 import start from 'lib/start';
+
+import type { SaffronHandler, Arguments } from '@darkobits/saffron';
 
 
 /**

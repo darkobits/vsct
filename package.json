@@ -4,6 +4,7 @@
   "description": "A tool for creating and distributing VS Code themes.",
   "author": "darkobits",
   "license": "Hippocratic",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/darkobits/vsct.git"
@@ -32,7 +33,7 @@
     "chokidar": "^3.5.3",
     "color": "^4.2.3",
     "dot-prop": "^8.0.2",
-    "execa": "^7.1.1",
+    "execa": "^8.0.1",
     "fs-extra": "^11.1.1",
     "ramda": "^0.29.0",
     "read-pkg-up": "^10.1.0",
@@ -40,10 +41,10 @@
     "traverse": "^0.6.7"
   },
   "devDependencies": {
-    "@darkobits/ts": "~0.18.8",
+    "@darkobits/ts": "~0.18.10",
     "@types/color": "^3.0.4",
     "@types/fs-extra": "^11.0.2",
-    "@types/ramda": "^0.29.3",
+    "@types/ramda": "^0.29.4",
     "@types/semver": "^7.5.2",
     "@types/traverse": "^0.6.33"
   }

@@ -7,7 +7,7 @@
  */
 import path from 'path';
 
-import LogPipe from '@darkobits/log/dist/lib/log-pipe';
+import LogPipe from '@darkobits/log/dist/lib/log-pipe.js';
 import { execa } from 'execa';
 import fs from 'fs-extra';
 
