@@ -27,7 +27,7 @@ async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, d
   return new Promise<void>(resolve => {
     log.info(log.prefix('start'), 'Waiting for source files.');
 
-    let lastFileAddedOn = Infinity;
+    let lastFileAddedOn = Number.POSITIVE_INFINITY;
 
     watcher.on('add', () => {
       lastFileAddedOn = Date.now();
@@ -78,8 +78,8 @@ export default function start({args, config, root, json}: CLIHandlerOptions) {
 
       await compile({args, config, root, json, isDev: true});
       await dev({args: {...args, silent: true}, config, root, json});
-    } catch (err) {
-      if (err.message.match(/EEXIST/g)) {
+    } catch (err: any) {
+      if (/EEXIST/g.test(err.message)) {
         // Ignore EEXIST errors on install.
       } else {
         log.error(log.prefix('start'), `Watcher error: ${err.stack}`);
@@ -94,7 +94,7 @@ export default function start({args, config, root, json}: CLIHandlerOptions) {
       await limitedRecompile.withOptions({
         priority: Date.now()
       });
-    } catch (err) {
+    } catch (err: any) {
       // @ts-ignore
       if (err instanceof Bottleneck.BottleneckError) {
         log.silly(log.prefix('start'), 'Job cancelled by rate-limiter.');

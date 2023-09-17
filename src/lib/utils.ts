@@ -18,7 +18,7 @@ interface CommonOptions {
  * lower-cased and all whitespace replaced with the '-' character.
  */
 export function toDirectoryName(input: string): string {
-  return input.replace(/[^\s\w.-]/g, '').replace(/\s/g, '-').toLowerCase();
+  return input.replaceAll(/[^\s\w.-]/g, '').replaceAll(/\s/g, '-').toLowerCase();
 }
 
 

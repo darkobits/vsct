@@ -1,28 +1,34 @@
-import execa, { ExecaChildProcess } from 'execa';
 import path from 'path';
+
+import { execa, type ExecaChildProcess } from 'execa';
+import { describe, it, expect, vi } from 'vitest';
 
 import dev from './dev';
 
 
-jest.mock('fs-extra', () => {
+vi.mock('fs-extra', () => {
   return {
-    access: jest.fn()
+    default: {
+      access: vi.fn()
+    }
   };
 });
 
-jest.mock('execa', () => {
-  const execaMock = jest.fn(() => {
+vi.mock('execa', () => {
+  const execaMock = vi.fn(() => {
     const processPromise = Promise.resolve() as unknown as ExecaChildProcess;
 
     // @ts-expect-error
     processPromise.stdout = {
-      pipe: jest.fn()
+      pipe: vi.fn()
     };
 
     return processPromise;
   });
 
-  return execaMock;
+  return {
+    execa: execaMock
+  };
 });
 
 
@@ -37,9 +43,15 @@ describe('install', () => {
     // @ts-expect-error
     await dev({ root, config });
 
-    expect(execa).toHaveBeenCalledWith(path.join(root, config.outDir, 'install.js'), {
-      cwd: path.join(root, config.outDir),
-      stdio: 'pipe'
-    });
+    expect(execa).toHaveBeenCalledWith(
+      path.join(root, config.outDir, 'install.js'),
+      {
+        cwd: path.join(root, config.outDir),
+        env: {
+          VSCT_DEV: 'true'
+        },
+        stdio: 'pipe'
+      }
+    );
   });
 });

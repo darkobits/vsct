@@ -38,4 +38,4 @@ Color.prototype.toJSON = function(this: Color): any {
 };
 
 
-export default Color;
+export {default} from 'color';

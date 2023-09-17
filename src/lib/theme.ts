@@ -1,4 +1,4 @@
-import dotProp from 'dot-prop';
+import * as dotProp from 'dot-prop';
 import * as R from 'ramda';
 
 import Color from 'lib/color';
@@ -10,8 +10,8 @@ import { merge } from 'lib/utils';
  * contain multiple scopes.
  */
 export interface GrammarDescriptor {
-  // [index: string]: any;
-  name?: string;
+  [index: string]: any;
+  name?: string | undefined;
   scope: string | Array<string>;
   settings: {
     foreground?: Color | string;
@@ -30,12 +30,12 @@ export interface GrammarDescriptor {
  * themes.
  */
 export interface TransformedGrammarDescriptor {
-  name?: string;
+  name?: string | undefined;
   scope: string | Array<string>;
   settings: {
     foreground?: string;
     background?: string;
-    fontStyle?: string;
+    fontStyle?: string | undefined;
   };
 }
 
@@ -171,9 +171,9 @@ export default function ThemeFactory(themeGeneratorFn: ThemeGenerationCallback):
         merge(theme.colors, colorSettings, true);
       }
     },
-    get: path => dotProp.get(theme, path),
+    get: path => dotProp.getProperty(theme, path),
     set: (path, value) => {
-      dotProp.set(theme, path, value);
+      dotProp.setProperty(theme, path, value);
     }
   } as ThemeGenerator);
 

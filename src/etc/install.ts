@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 
 import fs from 'fs';
 import os from 'os';
@@ -40,9 +39,8 @@ function parsePackageName(fullName: string) {
  * installed and creates a symlink in the VS Code extensions directory back to
  * the directory the installer resides in.
  */
-function install() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const manifest = require('./package.json');
+async function install() {
+  const manifest = await import(require.resolve('./package.json'));
 
   // The 'vsct dev' command handler will invoke this script with the VSCT_DEV
   // environment variable set.
@@ -73,7 +71,7 @@ function install() {
   // 3. Remove existing symlink if one exists.
   try {
     fs.unlinkSync(path.join(vsCodeExtensionsDir, extensionDirname));
-  } catch (err) {
+  } catch (err: any) {
     // Ignore ENOENT errors; there was no symlink to delete.
     if (err.code !== 'ENOENT') {
       console.error(`Error: ${err.message}`);
@@ -84,12 +82,13 @@ function install() {
   // 4. Symlink from the extensions directory to this script's directory.
   try {
     fs.symlinkSync(__dirname, path.join(vsCodeExtensionsDir, extensionDirname));
-  } catch (err) {
+  } catch (err: any) {
     console.error(`Error: ${err.message}`);
     process.exit(1);
   }
 
   console.log(`Installed extension: ${manifest.displayName}`);
 }
+
 
 void install();

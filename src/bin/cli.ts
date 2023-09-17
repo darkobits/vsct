@@ -3,7 +3,7 @@
 import path from 'path';
 
 import cli, { SaffronHandler, Arguments } from '@darkobits/saffron';
-import readPkgUp from 'read-pkg-up';
+import { readPackageUp } from 'read-pkg-up';
 
 import {
   CLIHandlerFn,
@@ -12,8 +12,8 @@ import {
 } from 'etc/types';
 import compile from 'lib/compile';
 import dev from 'lib/dev';
-import start from 'lib/start';
 import log from 'lib/log';
+import start from 'lib/start';
 
 
 /**
@@ -27,7 +27,7 @@ function commonHandler(handlerFn: CLIHandlerFn) {
         throw new Error('No configuration file found. Create a vsct.config.js file in your project directory.');
       }
 
-      const packageInfo = await readPkgUp({cwd: configPath});
+      const packageInfo = await readPackageUp({cwd: configPath});
 
       if (!packageInfo) {
         throw new Error('Unable to load the project\'s package.json.');
@@ -48,7 +48,7 @@ function commonHandler(handlerFn: CLIHandlerFn) {
         root,
         json: packageInfo.packageJson
       });
-    } catch (err) {
+    } catch (err: any) {
       log.error(log.prefix(handlerFn.name), err.stack);
       process.exit(1);
     }

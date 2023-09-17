@@ -37,7 +37,7 @@ async function loadThemeFromModule(absModulePath: string): Promise<ThemeDefiniti
 
   // Load/parse the indicated theme file.
   const module = importUnique(absModulePath);
-  const theme = module.default ? module.default : module;
+  const theme = module.default ?? module;
 
   // Scrub theme for circular references and functions.
   traverse(theme).forEach(function(node) {
@@ -105,8 +105,8 @@ async function compileThemeToJson({ src, dest, descriptor }: CompileThemeToJsonO
     log.verbose(log.prefix('compile'), `Output: ${log.chalk.green(dest)}.`);
 
     return theme;
-  } catch (err) {
-    if (err.message.match(/ENOENT/g)) {
+  } catch (err: any) {
+    if (/ENOENT/g.test(err.message)) {
       log.error(log.prefix('compile'), `Theme at ${log.chalk.green(src)} does not exist; skipping compilation.`);
       log.error(log.prefix('compile'), ` Attempted to load theme from: ${log.chalk.green(src)}`);
       // return;
@@ -160,7 +160,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
     repository: json.repository,
     categories: json.categories || ['Themes'],
     scripts: {
-      postinstall: './install.js'
+      postinstall: 'install.js'
     },
     contributes: {
       themes: [] as Array<ThemeDescriptor>
@@ -200,7 +200,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
         path: path.relative(absOutDir, dest),
         uiTheme: theme.uiTheme
       });
-    } catch (err) {
+    } catch (err: any) {
       log.error(log.prefix('compile'), err.stack);
       compilationHasErrors = true;
     }
@@ -229,7 +229,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
 
   // ----- [5] Copy Install Script ---------------------------------------------
 
-  const installScriptPath = require.resolve('etc/install');
+  const installScriptPath = path.resolve('../etc/install.js');
   await fs.copyFile(installScriptPath, path.join(absOutDir, 'install.js'));
 
 

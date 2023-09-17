@@ -8,7 +8,7 @@
 import path from 'path';
 
 import LogPipe from '@darkobits/log/dist/lib/log-pipe';
-import execa from 'execa';
+import { execa } from 'execa';
 import fs from 'fs-extra';
 
 import { DEFAULT_OUT_DIR } from 'etc/constants';
@@ -30,7 +30,7 @@ export default async function install({ /* args, */ root, config }: CLIHandlerOp
 
   try {
     await fs.access(absCompiledExtDir);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === 'ENOENT') {
       throw new Error(`Directory ${log.chalk.green(absCompiledExtDir)} does not exist. Ensure themes have been compiled before trying to install them.`);
     }
@@ -40,7 +40,7 @@ export default async function install({ /* args, */ root, config }: CLIHandlerOp
 
   try {
     await fs.access(installScriptPath);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === 'ENOENT') {
       throw new Error(`Install script does not exist at ${log.chalk.green(installScriptPath)}. Re-compile themes and try again.`);
     }

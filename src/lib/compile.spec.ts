@@ -1,34 +1,42 @@
 import path from 'path';
+
 import fs from 'fs-extra';
-import {Arguments} from 'yargs';
-import {toDirectoryName} from 'lib/utils';
+import { describe, it, expect, vi } from 'vitest';
+import { Arguments } from 'yargs';
+
+import { toDirectoryName } from 'lib/utils';
+
 import compile from './compile';
 
 
-jest.mock('fs-extra', () => {
+vi.mock('fs-extra', () => {
   return {
-    access: jest.fn(() => true),
-    ensureDir: jest.fn(() => true),
-    move: jest.fn(),
-    copyFile: jest.fn(),
-    pathExists: jest.fn(() => true),
-    readJson: jest.fn(),
-    writeJson: jest.fn(),
-    remove: jest.fn()
+    default: {
+      access: vi.fn(() => true),
+      ensureDir: vi.fn(() => true),
+      move: vi.fn(),
+      copyFile: vi.fn(),
+      pathExists: vi.fn(() => true),
+      readJson: vi.fn(),
+      writeJson: vi.fn(),
+      remove: vi.fn()
+    }
   };
 });
 
-jest.mock('@darkobits/import-unique', () => {
-  return (path: string) => {
-    // Return a theme module mock.
-    if (path.includes('__THEME_MODULE__')) {
-      return {
-        label: 'Theme Module',
-        '__THEME_MODULE__': true
-      };
-    }
+vi.mock('@darkobits/import-unique', () => {
+  return {
+    default: (path: string) => {
+      // Return a theme module mock.
+      if (path.includes('__THEME_MODULE__')) {
+        return {
+          label: 'Theme Module',
+          '__THEME_MODULE__': true
+        };
+      }
 
-    throw new Error(`Mock for @darkobits/import-unique has no handler for path: ${path}`);
+      throw new Error(`Mock for @darkobits/import-unique has no handler for path: ${path}`);
+    }
   };
 });
 
