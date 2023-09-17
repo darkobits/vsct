@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.1-beta.0](https://github.com/darkobits/vsct/compare/v0.13.0...v0.13.1-beta.0) (2023-09-17)
+
+
+### 🐞 Bug Fixes
+
+* Fix install script. ([a107362](https://github.com/darkobits/vsct/commit/a107362c5990213a7f93cc6c172df99b89a2796f))
+
 ## [0.13.0](https://github.com/darkobits/vsct/compare/v0.12.0...v0.13.0) (2023-09-17)
 
 
