@@ -1,12 +1,42 @@
-<a href="#top" id="top">
-  <img src="https://user-images.githubusercontent.com/441546/102319602-05031400-3f30-11eb-82e9-81afbc3ce384.png" style="max-width: 100%;">
-</a>
 <p align="center">
-  <a href="https://www.npmjs.com/package/@darkobits/vsct"><img src="https://img.shields.io/npm/v/@darkobits/vsct.svg?style=flat-square"></a>
-  <a href="https://github.com/darkobits/vsct/actions"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fdarkobits%2Fvsct%2Fbadge%3Fref%3Dmaster&style=flat-square&label=build&logo=none"></a>
-  <!-- <a href="https://app.codecov.io/gh/darkobits/vsct/branch/master"><img src="https://img.shields.io/codecov/c/github/darkobits/vsct/master?style=flat-square&color=brightgreen"></a> -->
-  <a href="https://depfu.com/github/darkobits/vsct"><img src="https://img.shields.io/depfu/darkobits/vsct?style=flat-square"></a>
-  <a href="https://conventionalcommits.org"><img src="https://img.shields.io/static/v1?label=commits&message=conventional&style=flat-square&color=398AFB"></a>
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://github.com/darkobits/vsct/assets/441546/da15d2b4-1b25-4905-af76-be0926c8ffb4"
+      width="100%"
+    >
+    <img
+      src="https://github.com/darkobits/vsct/assets/441546/4707a495-7a50-4ebd-a36d-05ce31dbc57c"
+      width="100%"
+    >
+  </picture>
+</p>
+<p align="center">
+  <a
+    href="https://www.npmjs.com/package/@darkobits/vsct"
+  ><img
+    src="https://img.shields.io/npm/v/@darkobits/vsct.svg?style=flat-square"
+  ></a>
+  <a
+    href="https://github.com/darkobits/vsct/actions?query=workflow%3Aci"
+  ><img
+    src="https://img.shields.io/github/actions/workflow/status/darkobits/vsct/ci.yml?style=flat-square"
+  ></a>
+  <a
+    href="https://depfu.com/repos/github/darkobits/vsct"
+  ><img
+    src="https://img.shields.io/depfu/darkobits/vsct?style=flat-square"
+  ></a>
+  <a
+    href="https://conventionalcommits.org"
+  ><img
+    src="https://img.shields.io/static/v1?label=commits&message=conventional&style=flat-square&color=398AFB"
+  ></a>
+  <a
+    href="https://firstdonoharm.dev"
+  ><img
+    src="https://img.shields.io/static/v1?label=license&message=hippocratic&style=flat-square&color=753065"
+  ></a>
 </p>
 
 A tool for authoring VS Code themes in JavaScript and distributing them via NPM.
