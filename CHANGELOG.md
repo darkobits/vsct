@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0](https://github.com/darkobits/vsct/compare/v0.12.0...v0.13.0) (2023-09-17)
+
+
+### 🏗 Chores
+
+* **deps:** Update dependencies. ([70dda5a](https://github.com/darkobits/vsct/commit/70dda5a0a3995fdeed334c10ffb9e4e24948bdcd))
+* **deps:** Update dependencies. ([49e0ae9](https://github.com/darkobits/vsct/commit/49e0ae99a10607f36e394777d039efd9941075d1))
+* Remove deprecated fields from theme generator. ([26135b1](https://github.com/darkobits/vsct/commit/26135b14a131e34b7e9e3807c900a02e842f6eb0))
+* Update LICENSE. ([9d1e5b9](https://github.com/darkobits/vsct/commit/9d1e5b94eb4e393e5b70997f06a2ffa62ad86335))
+
+
+### 📖 Documentation
+
+* Update README. ([532c0e7](https://github.com/darkobits/vsct/commit/532c0e78ffacb13505670c0cccbc4f394e7f89ea))
+* Update README. ([39e1a58](https://github.com/darkobits/vsct/commit/39e1a587105cea906fa4bb8d1d065aa88e703536))
+
 ## [0.12.0](https://github.com/darkobits/vsct/compare/v0.11.3...v0.12.0) (2021-06-16)
 
 
