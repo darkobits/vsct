@@ -3,7 +3,6 @@
 import path from 'path';
 
 import * as cli from '@darkobits/saffron';
-import { readPackageUp } from 'read-pkg-up';
 
 import {
   CLIHandlerFn,
@@ -22,25 +21,20 @@ import type { SaffronHandler, Arguments } from '@darkobits/saffron';
  * Wraps command functions to provide common logic for loading configuration
  * files and the host package's package.json.
  */
-function commonHandler(handlerFn: CLIHandlerFn) {
-  return async ({ argv, config, configPath }: Parameters<SaffronHandler<Arguments, VSCTConfiguration | VSCTConfigurationFactory>>[0]) => {
+function commonHandler(handlerFn: CLIHandlerFn, opts: { isDev?: boolean } = {}) {
+  return async ({ argv, config, configPath, pkg }: Parameters<SaffronHandler<Arguments, VSCTConfiguration | VSCTConfigurationFactory>>[0]) => {
     try {
-      if (!config || !configPath) {
-        throw new Error('No configuration file found. Create a vsct.config.js file in your project directory.');
-      }
+      if (!config || !configPath) throw new Error('Unable to find a VSCT configuration file.');
+      if (!pkg?.json) throw new Error('Unable to find package.json.');
 
-      const packageInfo = await readPackageUp({cwd: configPath});
-
-      if (!packageInfo) {
-        throw new Error('Unable to load the project\'s package.json.');
-      }
-
-      const computedConfig = typeof config === 'function' ? config({
-        json: packageInfo?.packageJson,
-        // If we are using the "start" or "dev" commands, pass isDev=true to
-        // config factories.
-        isDev: ['dev', 'start'].includes(argv._[0] as string)
-      }) : config;
+      const computedConfig = typeof config === 'function'
+        ? config({
+          json: pkg.json,
+          // If we are using the "start" or "dev" commands, pass isDev=true to
+          // config factories.
+          isDev: Boolean(opts.isDev)
+        })
+        : config;
 
       const root = path.dirname(configPath);
 
@@ -48,7 +42,7 @@ function commonHandler(handlerFn: CLIHandlerFn) {
         args: argv,
         config: computedConfig,
         root,
-        json: packageInfo.packageJson
+        json: pkg.json
       });
     } catch (err: any) {
       log.error(log.prefix(handlerFn.name), err.stack);
@@ -78,7 +72,7 @@ cli.command<Arguments, VSCTConfiguration | VSCTConfigurationFactory>({
     auto: false
   },
   description: 'Creates a symlink in the VS Code extensions directory to the local theme.',
-  handler: commonHandler(dev)
+  handler: commonHandler(dev, { isDev: true })
 });
 
 
@@ -90,18 +84,15 @@ cli.command<Arguments, VSCTConfiguration | VSCTConfigurationFactory>({
     auto: false
   },
   description: 'Compiles and installs themes, re-compiling on changes.',
-  handler: commonHandler(start)
+  handler: commonHandler(start, { isDev: true })
 });
 
 
 cli.init(yargs => {
-  yargs.strict(true);
-  yargs.showHelpOnFail(true);
+  yargs.scriptName('vsct');
+  // If no sub-command was provided, show help and exit.
   yargs.check(argv => {
-    if (!argv._[0]) {
-      throw new Error('Error: No command provided.');
-    }
-
+    if (!argv._[0]) throw new Error('Error: No command provided.');
     return true;
   });
 });

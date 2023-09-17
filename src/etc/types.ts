@@ -1,4 +1,4 @@
-import { NormalizedPackageJson } from 'read-pkg-up';
+import type { NormalizedPackageJson } from 'read-pkg-up';
 
 
 /**

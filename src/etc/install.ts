@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import os from 'node:os';
+import path from 'node:path';
+
+
+const require = createRequire(import.meta.url);
 
 
 /**
@@ -37,10 +41,10 @@ function parsePackageName(fullName: string) {
  * This script is copied into the output directory of compiled extensions and
  * executed when the extension is installed. It ensures that VS Code is
  * installed and creates a symlink in the VS Code extensions directory back to
- * the directory the installer resides in.
+ * the directory where the theme (and this installer) reside.
  */
 async function install() {
-  const manifest = await import(require.resolve('./package.json'));
+  const manifest = await import(require.resolve('./package.json'), { assert: { type: 'json' }});
 
   // The 'vsct dev' command handler will invoke this script with the VSCT_DEV
   // environment variable set.

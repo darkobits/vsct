@@ -1,7 +1,8 @@
-import { NormalizedPackageJson } from 'read-pkg-up';
 
 import { VSCTConfiguration } from 'etc/types';
 import log from 'lib/log';
+
+import type { NormalizedPackageJson } from 'read-pkg-up';
 
 
 /**
