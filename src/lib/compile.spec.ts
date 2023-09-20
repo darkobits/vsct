@@ -81,6 +81,8 @@ describe('compile', () => {
     expect(themeContents).toMatchObject({
       label: THEME_LABEL
     });
+
+    expect(() => fs.access(path.join(ROOT_DIR, OUT_DIR, 'install.js'), fs.constants.X_OK)).not.toThrow();
   });
 
   afterAll(async () => {

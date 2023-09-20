@@ -243,6 +243,7 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
 
   const installScriptPath = path.join(ourDirname, '..', 'etc', 'install.js');
   await fs.copyFile(installScriptPath, path.join(absOutDir, 'install.js'));
+  await fs.chmod(path.join(absOutDir, 'install.js'), 755);
 
 
   // ----- [7] Write Manifest --------------------------------------------------
