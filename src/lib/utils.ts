@@ -24,20 +24,6 @@ export function toDirectoryName(input: string): string {
 
 
 /**
- * @deprecated
- *
- * Clears all data from the Node require cache.
- */
-export function clearRequireCache() {
-  if (!require?.cache) return;
-
-  Object.keys(require.cache).forEach(key => {
-    Reflect.deleteProperty(require.cache, key);
-  });
-}
-
-
-/**
  * Performs an in-place merge of the keys in object b into object a.
  */
 export function merge<O extends {[index: string]: any}>(a: O, b: O, throwOnDuplicate = false): void {
@@ -114,7 +100,7 @@ export function computeExtensionDisplayName({ config, json, isDev }: CommonOptio
   } else {
     // If a "displayName" was not set in configuration or package.json, fall back
     // to using the extension's base name.
-    name = computeExtensionName({ config, json, isDev: false })
+    name = computeExtensionName({ config, json, isDev: false });
     log.warn(`Could not find a ${log.chalk.bold('displayName')} in a configuration file or package.json; falling-back to base name ${log.chalk.blue.bold(name)}.`);
   }
 

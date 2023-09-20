@@ -149,7 +149,10 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
 
   // Build extension manifest.
   const manifest: any = {
-    name: computeExtensionName({ config, json, isDev }),
+    // This _must_ use the same "name" field from the root package.json to
+    // ensure that the correct name is used when publishing to NPM.
+    name: json.name,
+    // name: computeExtensionName({ config, json, isDev }),
     displayName: computeExtensionDisplayName({ config, json, isDev }),
     // version: isDev ? semver.inc(json.version, 'prerelease', 'dev') : json.version,
     version: json.version,
