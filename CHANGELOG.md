@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0-beta.12](https://github.com/darkobits/vsct/compare/v0.13.0-beta.11...v0.13.0-beta.12) (2023-09-20)
+
+
+### 🛠 Refactoring
+
+* Improve name generation, install script. ([375e62f](https://github.com/darkobits/vsct/commit/375e62f030f4425b2cbc7cfe06590afbf672db55))
+
 ## [0.13.0-beta.11](https://github.com/darkobits/vsct/compare/v0.13.0-beta.10...v0.13.0-beta.11) (2023-09-20)
 
 
