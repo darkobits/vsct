@@ -26,7 +26,6 @@
     "prepare": "nr prepare"
   },
   "dependencies": {
-    "@darkobits/import-unique": "^1.0.7",
     "@darkobits/log": "^2.0.0-beta.16",
     "@darkobits/saffron": "^0.32.16",
     "bottleneck": "^2.19.5",

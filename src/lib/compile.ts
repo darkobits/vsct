@@ -5,7 +5,6 @@
  */
 import path from 'path';
 
-import importUnique from '@darkobits/import-unique';
 import fs from 'fs-extra';
 import semver from 'semver';
 import traverse from 'traverse';
@@ -29,25 +28,22 @@ import {
  * @private
  *
  * Provided a path to a JavaScript file:
- * - Loads  whose default export is an instance of
- * ThemeDefinition, loads and
+ * - Loads
  */
 async function loadThemeFromModule(absModulePath: string): Promise<ThemeDefinition> {
   await fs.access(absModulePath);
 
   // Load/parse the indicated theme file.
-  const module = importUnique(absModulePath);
-  const theme = module.default ?? module;
+  const importResult = await import(`${absModulePath}?cache-bust=${Date.now()}`);
+  const theme = importResult.default ?? importResult;
 
   // Scrub theme for circular references and functions.
   traverse(theme).forEach(function(node) {
-    if (this.circular) {
-      throw new Error('Theme contains circular references.');
-    }
+    if (this.circular)
+      throw new Error('Theme contains circular references, which are non-serializable.');
 
-    if (typeof node === 'function') {
-      throw new TypeError('Theme contains non-serializable entities.');
-    }
+    if (typeof node === 'function')
+      throw new TypeError('Theme contains functions, which are non-serializable.');
   });
 
   // If there is anything else that the theme exported that's not valid JSON,
