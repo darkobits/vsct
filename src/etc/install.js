@@ -44,13 +44,10 @@ async function install() {
 
   // The 'vsct dev' command handler will invoke this script with the VSCT_DEV
   // environment variable set.
-  const isDev = process.env.VSCT_DEV === 'true';
+  // const isDev = process.env.VSCT_DEV === 'true';
   const vsCodeExtensionsDir = path.join(os.homedir(), '.vscode', 'extensions');
   const { name } = parsePackageName(manifest.name);
-
-  // If being invoked by 'vsct dev', append "-dev" to the directory name so as
-  // to not overwrite a production version of the same extension.
-  const extensionDirname = `${manifest.publisher}.${name}${isDev ? '-dev' : ''}`;
+  const extensionDirname = `${manifest.publisher}.${name}`;
 
   // 1. Ensure extensions directory exists.
   try {
@@ -85,6 +82,17 @@ async function install() {
   } catch (err) {
     console.error(`Error: ${err.message}`);
     process.exit(1);
+  }
+
+  // 5. Force an update of extensions.json on the next window reload.
+  try {
+    await fs.unlink(path.join(vsCodeExtensionsDir, 'extensions.json'));
+  } catch (err) {
+    // Ignore ENOENT errors; there was no symlink to delete.
+    if (err.code !== 'ENOENT') {
+      console.error(`Error refreshing extensions.json: ${err.message}`);
+      process.exit(1);
+    }
   }
 
   console.log(`Installed extension: ${manifest.displayName}`);

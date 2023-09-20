@@ -10,6 +10,7 @@ import type { NormalizedPackageJson } from 'read-pkg-up';
 interface CommonOptions {
   config: VSCTConfiguration;
   json: NormalizedPackageJson;
+  isDev: boolean | undefined;
 }
 
 
@@ -80,16 +81,22 @@ function parsePackageName(fullName: string) {
  * Determines the string to use as the theme's name by inspecting the host
  * package's VSCT configuration and its package.json.
  */
-export function computeExtensionName({ config, json }: CommonOptions) {
+export function computeExtensionName({ config, json, isDev }: CommonOptions) {
+  let name;
+
   if (config.name) {
-    return config?.name;
+    name = config.name;
+  } else if (json.name) {
+    name = parsePackageName(json.name).name;
+  } else {
+    throw new Error('Unable to compute extension name.');
   }
 
-  if (json.name) {
-    return parsePackageName(json.name).name;
+  if (isDev) {
+    name = `${name}-dev`;
   }
 
-  throw new Error('Unable to determine theme\'s name.');
+  return name;
 }
 
 
@@ -97,25 +104,25 @@ export function computeExtensionName({ config, json }: CommonOptions) {
  * Determines the string to use as the theme's display name by inspecting the
  * host package's VSCT configuration and its package.json.
  */
-export function computeExtensionDisplayName({ config, json }: CommonOptions) {
+export function computeExtensionDisplayName({ config, json, isDev }: CommonOptions) {
+  let name = '';
+
   if (config.displayName) {
-    return config.displayName;
-  }
-
-  if (json?.displayName) {
-    return json.displayName;
-  }
-
-  // If a "displayName" was not set in configuration or package.json, fall back
-  // to using the extension's base name.
-  const name = computeExtensionName({ config, json });
-
-  if (name) {
+    name = config.displayName;
+  } else if (json?.displayName) {
+    name = json.displayName;
+  } else {
+    // If a "displayName" was not set in configuration or package.json, fall back
+    // to using the extension's base name.
+    name = computeExtensionName({ config, json, isDev: false })
     log.warn(`Could not find a ${log.chalk.bold('displayName')} in a configuration file or package.json; falling-back to base name ${log.chalk.blue.bold(name)}.`);
-    return name;
   }
 
-  throw new Error('Unable to determine theme\'s "displayName".');
+  if (isDev) {
+    name = `${name} (Dev)`;
+  }
+
+  return name;
 }
 
 

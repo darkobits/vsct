@@ -48,9 +48,9 @@ describe('install', () => {
       path.join('install.js'),
       {
         cwd: path.join(root, config.outDir),
-        env: {
-          VSCT_DEV: 'true'
-        },
+        // env: {
+        //   VSCT_DEV: 'true'
+        // },
         stdio: 'pipe'
       }
     );

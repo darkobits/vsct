@@ -50,10 +50,10 @@ export default async function dev({ /* args, */ root, config }: CLIHandlerOption
 
   const command = execaNode('install.js', {
     cwd: absCompiledExtDir,
-    stdio: 'pipe',
-    env: {
-      VSCT_DEV: 'true'
-    }
+    stdio: 'pipe'
+    // env: {
+    //   VSCT_DEV: 'true'
+    // }
   });
 
   command.stdout?.pipe(new LogPipe((line: string) => {

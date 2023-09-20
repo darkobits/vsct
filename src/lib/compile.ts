@@ -8,7 +8,7 @@ import path from 'path';
 import { dirname } from '@darkobits/fd-name';
 import fs from 'fs-extra';
 import { readPackageUp } from 'read-pkg-up';
-import semver from 'semver';
+// import semver from 'semver';
 import traverse from 'traverse';
 
 import { DEFAULT_OUT_DIR } from 'etc/constants';
@@ -132,12 +132,6 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
   // to.
   const absOutDir = path.resolve(root, config.outDir ?? DEFAULT_OUT_DIR);
 
-  // Compute name and display name.
-  const extensionName = computeExtensionName({ config, json });
-  const extensionDisplayName = computeExtensionDisplayName({ config, json });
-
-  log.info(log.prefix('compile'), `Compiling extension: ${log.chalk.bold(extensionDisplayName)}`);
-
 
   // ----- [2] Prepare Output Directory ----------------------------------------
 
@@ -155,15 +149,18 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
 
   // Build extension manifest.
   const manifest: any = {
-    name: `${json.name}${isDev ? '-dev' : ''}`,
-    displayName: extensionDisplayName,
-    version: isDev ? semver.inc(json.version, 'prerelease', 'dev') : json.version,
+    name: computeExtensionName({ config, json, isDev }),
+    displayName: computeExtensionDisplayName({ config, json, isDev }),
+    // version: isDev ? semver.inc(json.version, 'prerelease', 'dev') : json.version,
+    version: json.version,
     description: json.description,
-    publisher: computeExtensionPublisher({ config, json }),
+    publisher: computeExtensionPublisher({ config, json, isDev }),
     license: json.license,
     repository: json.repository,
     keywords: json.keywords,
     categories: json.categories || ['Themes'],
+    extensionKind: ['ui'],
+    preview: isDev,
     scripts: {
       postinstall: 'node install.js'
     },
@@ -184,8 +181,10 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
 
   let compilationHasErrors = false;
 
+  log.info(log.prefix('compile'), `Compiling extension: ${log.chalk.bold(manifest.displayName)}`);
+
   await Promise.all(config.themes.map(async (originalThemeDescriptor, index) => {
-    const themeJsonFilename = `${extensionName}-${index}`;
+    const themeJsonFilename = `${manifest.name}-${index}`;
     const dest = path.resolve(absOutDir, `${toDirectoryName(themeJsonFilename)}.json`);
 
     const themeDescriptor = {
