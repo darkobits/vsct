@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0-beta.14](https://github.com/darkobits/vsct/compare/v0.13.0-beta.13...v0.13.0-beta.14) (2023-09-20)
+
+
+### 🐞 Bug Fixes
+
+* Use type `junction` when creating symlinks in Windows. ([5011121](https://github.com/darkobits/vsct/commit/501112184a1a4bcdf92b536223c01599aa9991f8))
+
 ## [0.13.0-beta.13](https://github.com/darkobits/vsct/compare/v0.13.0-beta.12...v0.13.0-beta.13) (2023-09-20)
 
 
