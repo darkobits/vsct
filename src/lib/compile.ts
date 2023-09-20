@@ -165,7 +165,7 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
     keywords: json.keywords,
     categories: json.categories || ['Themes'],
     scripts: {
-      postinstall: 'install.js'
+      postinstall: 'node install.js'
     },
     contributes: {
       themes: [] as Array<ThemeDescriptor>
