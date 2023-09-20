@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0-beta.4](https://github.com/darkobits/vsct/compare/v0.13.1-beta.3...v0.13.0-beta.4) (2023-09-20)
+
+
+### ✨ Features
+
+* Add `defineConfig` helper. ([1a19371](https://github.com/darkobits/vsct/commit/1a19371bf00e3d4acdafc21bfcf5d9fff4c21c15))
+
+
+### 🐞 Bug Fixes
+
+* Add `uiTheme` property from theme descriptor. ([c88d1da](https://github.com/darkobits/vsct/commit/c88d1da0cf4269a846116ba427d64fd4ff09745a))
+
 ## [0.13.1-beta.3](https://github.com/darkobits/vsct/compare/v0.13.1-beta.2...v0.13.1-beta.3) (2023-09-20)
 
 
