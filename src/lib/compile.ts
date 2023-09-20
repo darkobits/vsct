@@ -160,8 +160,9 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
     version: isDev ? semver.inc(json.version, 'prerelease', 'dev') : json.version,
     description: json.description,
     publisher: computeExtensionPublisher({ config, json }),
-    keywords: json.keywords,
+    license: json.license,
     repository: json.repository,
+    keywords: json.keywords,
     categories: json.categories || ['Themes'],
     scripts: {
       postinstall: 'install.js'
