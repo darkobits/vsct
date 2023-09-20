@@ -189,7 +189,9 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
 
     const themeDescriptor = {
       ...originalThemeDescriptor,
-      label: `${originalThemeDescriptor.label} (Dev)`
+      label: isDev
+        ? `${originalThemeDescriptor.label} (Dev)`
+        : originalThemeDescriptor.label
     };
 
     try {

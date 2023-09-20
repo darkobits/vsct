@@ -12,44 +12,47 @@ describe('compile', () => {
   const ROOT_DIR = temporaryDirectory();
 
   const args = {} as Arguments;
-  const THEME_NAME = '__THEME_NAME__';
-  const THEME_LABEL = '__THEME_LABEL__';
-  const AUTHOR_NAME = '__AUTHOR_NAME__';
+  const THEME_NAME = 'theme-name';
+  const THEME_LABEL = 'Theme Label';
+  const AUTHOR_NAME = 'Author Name';
   const THEME_VERSION = '1.2.3';
-
-  const OUT_DIR = '__OUT_DIR__';
-  const THEME_PATH = './__THEME_MODULE__.js';
+  const OUT_DIR = 'output';
+  const THEME_PATH = './theme-entrypoint.js';
 
   beforeAll(async () => {
+    // Write a mock entrypoint for the theme.
     await fs.writeFile(path.join(ROOT_DIR, THEME_PATH), `
       export default {
         label: "${THEME_LABEL}",
+        foo: 'bar',
         '__THEME_MODULE__': true
       }
     `);
-  });
 
-  it('should compile each theme in the provided configuration object', async () => {
-    const config = {
-      displayName: THEME_NAME,
-      outDir: OUT_DIR,
-      themes: [
-        {
-          path: THEME_PATH
-        }
-      ]
-    } as any;
-
-    const json = {
+    // Write a mock package.json for the theme.
+    await fs.writeJSON(path.join(ROOT_DIR, 'package.json'), {
       name: THEME_NAME,
       version: THEME_VERSION,
       author: {
         name: AUTHOR_NAME
       }
+    });
+  });
+
+  it('should compile each theme in the provided configuration object', async () => {
+    // Mock vsct.config.js that would have been loaded/parsed by the CLI.
+    const config = {
+      displayName: THEME_NAME,
+      outDir: OUT_DIR,
+      themes: [
+        {
+          label: THEME_LABEL,
+          path: THEME_PATH
+        }
+      ]
     } as any;
 
-    await compile({ args, config, json, root: ROOT_DIR });
-
+    await compile({ args, config, root: ROOT_DIR });
 
     const manifestContents = await fs.readJSON(path.join(ROOT_DIR, OUT_DIR, 'package.json'));
 
@@ -65,29 +68,19 @@ describe('compile', () => {
       contributes: {
         themes: [
           {
-            // label: 'undefined (Dev)',
-            path: '__theme_name__-0.json'
+            label: THEME_LABEL
           }
         ]
       }
     });
 
-    // @ts-ignore
-    // expect(fs.ensureDir.mock.calls[0][0]).toEqual(path.join(ROOT_DIR, OUT_DIR));
+    const themeContents = await fs.readJSON(
+      path.join(ROOT_DIR, OUT_DIR, manifestContents.contributes.themes[0].path)
+    );
 
-    // // @ts-ignore
-    // expect(fs.writeJson.mock.calls[1][0]).toEqual(path.join(ROOT_DIR, OUT_DIR, 'package.json'));
-
-    // // @ts-ignore
-    // expect(fs.writeJson.mock.calls[0][1]).toBeTruthy();
-
-    // // @ts-ignore
-    // expect(fs.writeJson.mock.calls[0][0]).toEqual(path.join(ROOT_DIR, OUT_DIR, `${toDirectoryName(THEME_NAME)}-0.json`));
-
-    // // @ts-ignore
-    // expect(fs.writeJson.mock.calls[0][1]).toMatchObject({
-    //   __THEME_MODULE__: true
-    // });
+    expect(themeContents).toMatchObject({
+      label: THEME_LABEL
+    });
   });
 
   afterAll(async () => {
