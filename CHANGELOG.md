@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0-beta.8](https://github.com/darkobits/vsct/compare/v0.13.0-beta.7...v0.13.0-beta.8) (2023-09-20)
+
+
+### 🐞 Bug Fixes
+
+* Don't use `require.cache` in development mode. ([a61e178](https://github.com/darkobits/vsct/commit/a61e178dbebcc75d28a7cea7e098e2aa881ac346))
+
 ## [0.13.0-beta.7](https://github.com/darkobits/vsct/compare/v0.13.0-beta.6...v0.13.0-beta.7) (2023-09-20)
 
 
