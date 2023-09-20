@@ -195,7 +195,7 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
     };
 
     try {
-      const theme = await compileThemeToJson({
+      await compileThemeToJson({
         src: path.resolve(root, themeDescriptor.path),
         dest,
         descriptor: themeDescriptor
@@ -204,7 +204,7 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
       manifest.contributes.themes.push({
         label: themeDescriptor.label,
         path: path.relative(absOutDir, dest),
-        uiTheme: theme.uiTheme
+        uiTheme: themeDescriptor.uiTheme
       });
     } catch (err: any) {
       log.error(log.prefix('compile'), err.stack);
