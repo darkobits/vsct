@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.1-beta.2](https://github.com/darkobits/vsct/compare/v0.13.1-beta.1...v0.13.1-beta.2) (2023-09-20)
+
+
+### 🐞 Bug Fixes
+
+* Compute host package manifest correctly. ([4a31fd5](https://github.com/darkobits/vsct/commit/4a31fd571da29eb231579098e501d10607c8945d))
+
 ## [0.13.1-beta.1](https://github.com/darkobits/vsct/compare/v0.13.1-beta.0...v0.13.1-beta.1) (2023-09-20)
 
 
