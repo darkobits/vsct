@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.1-beta.1](https://github.com/darkobits/vsct/compare/v0.13.1-beta.0...v0.13.1-beta.1) (2023-09-20)
+
+
+### 🛠 Refactoring
+
+* Replace `import-unique` with dynamic import. ([3f68462](https://github.com/darkobits/vsct/commit/3f68462aaf3e3d4b40664c71d1dcc129fbfb5bd2))
+* Update tests. ([b55c805](https://github.com/darkobits/vsct/commit/b55c8053c0635ee7b5fb66355d98d0225d05882b))
+
 ## [0.13.1-beta.0](https://github.com/darkobits/vsct/compare/v0.13.0...v0.13.1-beta.0) (2023-09-17)
 
 
