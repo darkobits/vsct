@@ -24,7 +24,7 @@ let lastLine: string;
  * directory where the compiled extension resides. This assumes that "vsct
  * compile" has been run first.
  */
-export default async function install({ /* args, */ root, config }: CLIHandlerOptions) {
+export default async function dev({ /* args, */ root, config }: CLIHandlerOptions) {
   const absCompiledExtDir = path.resolve(root, config.outDir ?? DEFAULT_OUT_DIR);
   const installScriptPath = path.join(absCompiledExtDir, 'install.js');
 

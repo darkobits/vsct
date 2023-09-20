@@ -1,4 +1,3 @@
-
 import { VSCTConfiguration } from 'etc/types';
 import log from 'lib/log';
 

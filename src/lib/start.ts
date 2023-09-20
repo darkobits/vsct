@@ -44,7 +44,7 @@ async function waitForThemeFilesToBecomeAvailable(watcher: chokidar.FSWatcher, d
 }
 
 
-export default function start({args, config, root, json}: CLIHandlerOptions) {
+export default function start({ args, config, root }: CLIHandlerOptions) {
   // Get a unique list of absolute paths resolved from the "main" entry in each
   // theme descriptor object in the user's VSCT configuration file.
   const absThemeDirs = [...new Set(config.themes.map(themeDescriptor => {
@@ -76,8 +76,8 @@ export default function start({args, config, root, json}: CLIHandlerOptions) {
       // them.
       await compilationReadyPromise;
 
-      await compile({args, config, root, json, isDev: true});
-      await dev({args: {...args, silent: true}, config, root, json});
+      await compile({ args, config, root, isDev: true });
+      await dev({ args: {...args, silent: true }, config, root });
     } catch (err: any) {
       if (/EEXIST/g.test(err.message)) {
         // Ignore EEXIST errors on install.

@@ -92,7 +92,7 @@ export interface CLIHandlerOptions {
   /**
    * The host package's parsed package.json.
    */
-  json: NormalizedPackageJson;
+  // json: NormalizedPackageJson;
 
   /**
    * Whether or not the handler function is being invoked as part of a

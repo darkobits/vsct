@@ -7,6 +7,7 @@ import path from 'path';
 
 import { dirname } from '@darkobits/fd-name';
 import fs from 'fs-extra';
+import { readPackageUp } from 'read-pkg-up';
 import semver from 'semver';
 import traverse from 'traverse';
 
@@ -118,8 +119,14 @@ async function compileThemeToJson({ src, dest, descriptor }: CompileThemeToJsonO
  * Responsible for compiling each theme defined in the user's configuration
  * file.
  */
-export default async function compile({ config, root, json, isDev }: CLIHandlerOptions) {
+export default async function compile({ config, root, isDev }: CLIHandlerOptions) {
   const runTime = log.createTimer();
+
+  // ----- [1] Gather Theme Info -----------------------------------------------
+
+  const packageResult = await readPackageUp({ cwd: root });
+  if (!packageResult) throw new Error(`Unable to a find package.json from ${root}.`);
+  const json = packageResult.packageJson;
 
   // Compute the absolute path to the directory we will write compiled themes
   // to.
@@ -132,7 +139,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
   log.info(log.prefix('compile'), `Compiling extension: ${log.chalk.bold(extensionDisplayName)}`);
 
 
-  // ----- [1] Prepare Output Directory ----------------------------------------
+  // ----- [2] Prepare Output Directory ----------------------------------------
 
   // Remove and re-create the output directory.
   await fs.remove(absOutDir);
@@ -141,7 +148,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
   log.verbose(log.prefix('compile'), `Output: ${log.chalk.green(absOutDir)}`);
 
 
-  // ----- [2] Prepare Manifest ------------------------------------------------
+  // ----- [3] Prepare Manifest ------------------------------------------------
 
   // Compute the absolute path to the manifest we will create for the theme.
   const absManifestOutPath = path.resolve(absOutDir, 'package.json');
@@ -172,7 +179,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
   }
 
 
-  // ----- [3] Compile Themes --------------------------------------------------
+  // ----- [4] Compile Themes --------------------------------------------------
 
   let compilationHasErrors = false;
 
@@ -210,7 +217,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
   }
 
 
-  // ----- [4] Copy Optional Files ---------------------------------------------
+  // ----- [5] Copy Optional Files ---------------------------------------------
 
   // See: https://code.visualstudio.com/api/working-with-extensions/publishing-extension#advanced-usage
   const optionalFiles = ['README.md', 'CHANGELOG.md', 'LICENSE'];
@@ -225,15 +232,16 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
   }));
 
 
-  // ----- [5] Copy Install Script ---------------------------------------------
-  // console.warn('WTF', import.meta.url);
+  // ----- [6] Copy Install Script ---------------------------------------------
 
-  // @ts-ignore
-  const installScriptPath = path.join(dirname(), '..', 'etc', 'install.js');
+  const ourDirname = dirname();
+  if (!ourDirname) throw new Error('Unable to compute current directory name.');
+
+  const installScriptPath = path.join(ourDirname, '..', 'etc', 'install.js');
   await fs.copyFile(installScriptPath, path.join(absOutDir, 'install.js'));
 
 
-  // ----- [6] Write Manifest --------------------------------------------------
+  // ----- [7] Write Manifest --------------------------------------------------
 
   await fs.writeJson(absManifestOutPath, manifest, {spaces: 2});
   log.verbose(log.prefix('compile'), `Wrote extension manifest to: ${log.chalk.green(absManifestOutPath)}`);
