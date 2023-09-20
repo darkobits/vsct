@@ -44,7 +44,7 @@ describe('install', () => {
     await dev({ root, config });
 
     expect(execa).toHaveBeenCalledWith(
-      path.join(root, config.outDir, 'install.js'),
+      path.join(root, config.outDir, 'install.mjs'),
       {
         cwd: path.join(root, config.outDir),
         env: {

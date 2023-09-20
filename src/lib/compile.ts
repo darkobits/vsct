@@ -165,7 +165,7 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
     keywords: json.keywords,
     categories: json.categories || ['Themes'],
     scripts: {
-      postinstall: 'node install.js'
+      postinstall: 'node install.mjs'
     },
     contributes: {
       themes: [] as Array<ThemeDescriptor>
@@ -241,7 +241,7 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
   if (!ourDirname) throw new Error('Unable to compute current directory name.');
 
   const installScriptPath = path.join(ourDirname, '..', 'etc', 'install.js');
-  await fs.copyFile(installScriptPath, path.join(absOutDir, 'install.js'));
+  await fs.copyFile(installScriptPath, path.join(absOutDir, 'install.mjs'));
 
 
   // ----- [7] Write Manifest --------------------------------------------------

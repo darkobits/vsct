@@ -26,7 +26,7 @@ let lastLine: string;
  */
 export default async function dev({ /* args, */ root, config }: CLIHandlerOptions) {
   const absCompiledExtDir = path.resolve(root, config.outDir ?? DEFAULT_OUT_DIR);
-  const installScriptPath = path.join(absCompiledExtDir, 'install.js');
+  const installScriptPath = path.join(absCompiledExtDir, 'install.mjs');
 
   try {
     await fs.access(absCompiledExtDir);
