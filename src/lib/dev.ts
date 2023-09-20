@@ -48,7 +48,7 @@ export default async function dev({ /* args, */ root, config }: CLIHandlerOption
     throw err;
   }
 
-  const command = execaNode(installScriptPath, {
+  const command = execaNode('install.js', {
     cwd: absCompiledExtDir,
     stdio: 'pipe',
     env: {

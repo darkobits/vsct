@@ -82,7 +82,9 @@ describe('compile', () => {
       label: THEME_LABEL
     });
 
-    expect(() => fs.access(path.join(ROOT_DIR, OUT_DIR, 'install.js'), fs.constants.X_OK)).not.toThrow();
+    expect(async () => {
+      await fs.access(path.join(ROOT_DIR, OUT_DIR, 'install.js'), fs.constants.X_OK);
+    }).not.toThrow();
   });
 
   afterAll(async () => {

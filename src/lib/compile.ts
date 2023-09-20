@@ -240,10 +240,11 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
   const ourDirname = dirname();
   if (!ourDirname) throw new Error('Unable to compute current directory name.');
 
-  const installScriptPath = path.join(ourDirname, '..', 'etc', 'install.js');
-  await fs.copyFile(installScriptPath, path.join(absOutDir, 'install.js'));
-  await fs.chmod(path.join(absOutDir, 'install.js'), 755);
+  const installScriptSrcPath = path.join(ourDirname, '..', 'etc', 'install.js');
+  const installScriptDestPath = path.join(absOutDir, 'install.js');
 
+  await fs.copyFile(installScriptSrcPath, installScriptDestPath);
+  await fs.chmod(installScriptDestPath, 0o755);
 
   // ----- [7] Write Manifest --------------------------------------------------
 
