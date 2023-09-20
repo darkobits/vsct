@@ -7,8 +7,13 @@ export { default as Color } from 'lib/color';
 export { default } from 'lib/theme';
 import type { VSCTConfiguration } from 'etc/types';
 
-export function defineConfig(userConfig: VSCTConfiguration) {
-  return userConfig;
+type UserConfigurationArgument =
+  VSCTConfiguration |
+  (() => VSCTConfiguration) |
+  (() => Promise<VSCTConfiguration>);
+
+export function defineConfig(arg: UserConfigurationArgument) {
+  return arg;
 }
 
 export type { VSCTConfiguration } from 'etc/types';
