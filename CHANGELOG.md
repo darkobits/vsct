@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0-beta.7](https://github.com/darkobits/vsct/compare/v0.13.0-beta.6...v0.13.0-beta.7) (2023-09-20)
+
+
+### 🐞 Bug Fixes
+
+* Publish extensions as ESM, simplify install script. ([8ed6550](https://github.com/darkobits/vsct/commit/8ed65502cc106e3efac79c37a1b923bc6cc60df6))
+
 ## [0.13.0-beta.6](https://github.com/darkobits/vsct/compare/v0.13.0-beta.5...v0.13.0-beta.6) (2023-09-20)
 
 
