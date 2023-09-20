@@ -14,7 +14,7 @@ import {CLIHandlerOptions} from 'etc/types';
 import compile from 'lib/compile';
 import dev from 'lib/dev';
 import log from 'lib/log';
-import { clearRequireCache } from 'lib/utils';
+// import { clearRequireCache } from 'lib/utils';
 
 
 /**
@@ -70,7 +70,7 @@ export default function start({ args, config, root }: CLIHandlerOptions) {
   // Create a rate-limited function that will recompile and reinstall themes.
   const limitedRecompile = limiter.wrap(async () => {
     try {
-      clearRequireCache();
+      // clearRequireCache();
 
       // Wait until the theme's source files are available before we try to read
       // them.

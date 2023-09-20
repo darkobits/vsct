@@ -23,9 +23,13 @@ export function toDirectoryName(input: string): string {
 
 
 /**
+ * @deprecated
+ *
  * Clears all data from the Node require cache.
  */
 export function clearRequireCache() {
+  if (!require?.cache) return;
+
   Object.keys(require.cache).forEach(key => {
     Reflect.deleteProperty(require.cache, key);
   });
