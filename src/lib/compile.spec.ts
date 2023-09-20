@@ -63,7 +63,7 @@ describe('compile', () => {
       publisher: AUTHOR_NAME,
       categories: ['Themes'],
       scripts: {
-        postinstall: 'node install.mjs'
+        postinstall: 'node install.js'
       },
       contributes: {
         themes: [

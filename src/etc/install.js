@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import fs from 'node:fs';
-import { createRequire } from 'node:module';
+import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import * as url from 'node:url';
 
 
-const require = createRequire(import.meta.url);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 
 /**
@@ -44,7 +44,7 @@ function parsePackageName(fullName) {
  * the directory where the theme (and this installer) reside.
  */
 async function install() {
-  const manifest = await import(require.resolve('./package.json'), { assert: { type: 'json' }});
+  const manifest = JSON.parse(await fs.readFile(path.join(__dirname, 'package.json'), 'utf8'));
 
   // The 'vsct dev' command handler will invoke this script with the VSCT_DEV
   // environment variable set.
@@ -58,7 +58,7 @@ async function install() {
 
   // 1. Ensure extensions directory exists.
   try {
-    fs.accessSync(vsCodeExtensionsDir, fs.constants.R_OK);
+    await fs.access(vsCodeExtensionsDir, fs.constants.R_OK);
   } catch {
     console.error('Error: VS Code does not appear to be installed on your system.');
     process.exit(1);
@@ -66,7 +66,7 @@ async function install() {
 
   // 2. Ensure the extensions directory is writable.
   try {
-    fs.accessSync(vsCodeExtensionsDir, fs.constants.W_OK);
+    await fs.access(vsCodeExtensionsDir, fs.constants.W_OK);
   } catch {
     console.error('Error: Unable to write to the VS Code extensions directory.\nAdministrator permissions may be required.');
     process.exit(1);
@@ -74,7 +74,7 @@ async function install() {
 
   // 3. Remove existing symlink if one exists.
   try {
-    fs.unlinkSync(path.join(vsCodeExtensionsDir, extensionDirname));
+    await fs.unlink(path.join(vsCodeExtensionsDir, extensionDirname));
   } catch (err) {
     // Ignore ENOENT errors; there was no symlink to delete.
     if (err.code !== 'ENOENT') {
@@ -85,7 +85,7 @@ async function install() {
 
   // 4. Symlink from the extensions directory to this script's directory.
   try {
-    fs.symlinkSync(__dirname, path.join(vsCodeExtensionsDir, extensionDirname));
+    await fs.symlink(__dirname, path.join(vsCodeExtensionsDir, extensionDirname));
   } catch (err) {
     console.error(`Error: ${err.message}`);
     process.exit(1);
