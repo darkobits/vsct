@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0-beta.5](https://github.com/darkobits/vsct/compare/v0.13.0-beta.4...v0.13.0-beta.5) (2023-09-20)
+
+
+### 🐞 Bug Fixes
+
+* `defineConfig` accepts proper type. ([9410a57](https://github.com/darkobits/vsct/commit/9410a57e18448acb9a99adf3d06dd51d14eec7e3))
+* Ensure post-install script runs on Windows. ([2fb8c0f](https://github.com/darkobits/vsct/commit/2fb8c0f2a3ef00e1d5064d5fb753503fd4821d00))
+* Include `license` property in theme manifests. ([2d30563](https://github.com/darkobits/vsct/commit/2d3056322cb314d5206b64fb5bfbec12f928fb36))
+
 ## [0.13.0-beta.4](https://github.com/darkobits/vsct/compare/v0.13.1-beta.3...v0.13.0-beta.4) (2023-09-20)
 
 
