@@ -1,12 +1,8 @@
 #!/usr/bin/env node
 
-import fs from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
-import * as url from 'node:url';
-
-
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const fs = require('node:fs/promises');
+const os = require('node:os');
+const path = require('node:path');
 
 
 /**
@@ -44,7 +40,7 @@ function parsePackageName(fullName) {
  * the directory where the theme (and this installer) reside.
  */
 async function install() {
-  const manifest = JSON.parse(await fs.readFile(path.join(__dirname, 'package.json'), 'utf8'));
+  const manifest = require(path.join(__dirname, 'package.json'));
 
   // The 'vsct dev' command handler will invoke this script with the VSCT_DEV
   // environment variable set.

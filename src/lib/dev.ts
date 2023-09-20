@@ -8,7 +8,7 @@
 import path from 'path';
 
 import LogPipe from '@darkobits/log/dist/lib/log-pipe.js';
-import { execa } from 'execa';
+import { execaNode } from 'execa';
 import fs from 'fs-extra';
 
 import { DEFAULT_OUT_DIR } from 'etc/constants';
@@ -48,7 +48,7 @@ export default async function dev({ /* args, */ root, config }: CLIHandlerOption
     throw err;
   }
 
-  const command = execa(installScriptPath, {
+  const command = execaNode(installScriptPath, {
     cwd: absCompiledExtDir,
     stdio: 'pipe',
     env: {

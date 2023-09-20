@@ -27,7 +27,8 @@ vi.mock('execa', () => {
   });
 
   return {
-    execa: execaMock
+    execa: execaMock,
+    execaNode: execaMock
   };
 });
 

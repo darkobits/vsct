@@ -161,7 +161,6 @@ export default async function compile({ config, root, isDev }: CLIHandlerOptions
     description: json.description,
     publisher: computeExtensionPublisher({ config, json }),
     license: json.license,
-    type: 'module',
     repository: json.repository,
     keywords: json.keywords,
     categories: json.categories || ['Themes'],
