@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0-beta.13](https://github.com/darkobits/vsct/compare/v0.13.0-beta.12...v0.13.0-beta.13) (2023-09-20)
+
+
+### 🐞 Bug Fixes
+
+* Compute package name correctly. ([b8f2488](https://github.com/darkobits/vsct/commit/b8f24885c32e754c45e31daa7f38a7bc5ad3660e))
+
 ## [0.13.0-beta.12](https://github.com/darkobits/vsct/compare/v0.13.0-beta.11...v0.13.0-beta.12) (2023-09-20)
 
 
