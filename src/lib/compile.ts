@@ -5,6 +5,7 @@
  */
 import path from 'path';
 
+import { dirname } from '@darkobits/fd-name';
 import fs from 'fs-extra';
 import semver from 'semver';
 import traverse from 'traverse';
@@ -198,6 +199,7 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
       });
     } catch (err: any) {
       log.error(log.prefix('compile'), err.stack);
+      console.error(err);
       compilationHasErrors = true;
     }
   }));
@@ -224,8 +226,10 @@ export default async function compile({ config, root, json, isDev }: CLIHandlerO
 
 
   // ----- [5] Copy Install Script ---------------------------------------------
+  // console.warn('WTF', import.meta.url);
 
-  const installScriptPath = path.resolve('../etc/install.js');
+  // @ts-ignore
+  const installScriptPath = path.join(dirname(), '..', 'etc', 'install.js');
   await fs.copyFile(installScriptPath, path.join(absOutDir, 'install.js'));
 
 

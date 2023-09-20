@@ -26,6 +26,8 @@
     "prepare": "nr prepare"
   },
   "dependencies": {
+    "@darkobits/fd-name": "^0.1.7",
+    "@darkobits/import-unique": "^1.0.7",
     "@darkobits/log": "^2.0.0-beta.16",
     "@darkobits/saffron": "^0.32.16",
     "bottleneck": "^2.19.5",
@@ -45,6 +47,7 @@
     "@types/fs-extra": "^11.0.2",
     "@types/ramda": "^0.29.4",
     "@types/semver": "^7.5.2",
-    "@types/traverse": "^0.6.33"
+    "@types/traverse": "^0.6.33",
+    "tempy": "^3.1.0"
   }
 }

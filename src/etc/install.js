@@ -17,7 +17,7 @@ const require = createRequire(import.meta.url);
  *
  * (Copied from utils.ts)
  */
-function parsePackageName(fullName: string) {
+function parsePackageName(fullName) {
   const match = /^(?:@(?<scope>.*)\/)?(?<name>.*)$/g.exec(fullName);
 
   if (!match) {
@@ -75,7 +75,7 @@ async function install() {
   // 3. Remove existing symlink if one exists.
   try {
     fs.unlinkSync(path.join(vsCodeExtensionsDir, extensionDirname));
-  } catch (err: any) {
+  } catch (err) {
     // Ignore ENOENT errors; there was no symlink to delete.
     if (err.code !== 'ENOENT') {
       console.error(`Error: ${err.message}`);
@@ -86,7 +86,7 @@ async function install() {
   // 4. Symlink from the extensions directory to this script's directory.
   try {
     fs.symlinkSync(__dirname, path.join(vsCodeExtensionsDir, extensionDirname));
-  } catch (err: any) {
+  } catch (err) {
     console.error(`Error: ${err.message}`);
     process.exit(1);
   }
