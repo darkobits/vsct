@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0-beta.6](https://github.com/darkobits/vsct/compare/v0.13.0-beta.5...v0.13.0-beta.6) (2023-09-20)
+
+
+### 🐞 Bug Fixes
+
+* Use `.mjs` extension for install script. ([e9f33ac](https://github.com/darkobits/vsct/commit/e9f33ac983754f08b5ae43f17fed907b4bfffeeb))
+
 ## [0.13.0-beta.5](https://github.com/darkobits/vsct/compare/v0.13.0-beta.4...v0.13.0-beta.5) (2023-09-20)
 
 
