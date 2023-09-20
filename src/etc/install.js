@@ -78,7 +78,7 @@ async function install() {
 
   // 4. Symlink from the extensions directory to this script's directory.
   try {
-    await fs.symlink(__dirname, path.join(vsCodeExtensionsDir, extensionDirname));
+    await fs.symlink(__dirname, path.join(vsCodeExtensionsDir, extensionDirname), 'junction');
   } catch (err) {
     console.error(`Error: ${err.message}`);
     process.exit(1);

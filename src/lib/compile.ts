@@ -19,7 +19,7 @@ import {
 import log from 'lib/log';
 import { ThemeDefinition } from 'lib/theme';
 import {
-  computeExtensionName,
+  // computeExtensionName,
   computeExtensionDisplayName,
   computeExtensionPublisher,
   toDirectoryName
